@@ -44,16 +44,13 @@ public class HttpRequest {
         return body;
     }
 
-    /**
-     * default type is GET
-     */
     private RequestType type;
     private String path = "/";
-    private String parameters;
+    private String parameters = "";
     private String version;
     private String host;
     private List<String> headers = new LinkedList<>();
-    private String body;
+    private String body = "";
 
     /**
      * ONLY WITH VALID STRING
@@ -64,29 +61,62 @@ public class HttpRequest {
         String[] params = s.split("\n"); // split by line
         String[] requestLine = params[0].split(" ");
         if (requestLine[0].equals("GET")) {
-            this.type = RequestType.GET;
+            builder.setRequestType(RequestType.GET);
+        } else if (requestLine[0].equals("POST")) {
+            builder.setRequestType(RequestType.POST);
         }
 
-        String[] kostil = requestLine[1].split("\\$"); // ты че мудак, назови нормально
-        path = kostil[0];
-        if (kostil.length > 1) parameters = kostil[1];
+        /**
+         * need to be careful 'cause link should not be empty. "\\" at least
+         */
+        String[] link = requestLine[1].split("\\$");
+        builder.setPath(link[0]);
+        if (link.length > 1) builder.setParameters(link[1]);
 
-        version = requestLine[2];
+        builder.setVersion(requestLine[2]);
 
         int i = 1;
-        while (params.length > i && !params[i].equals(" ")) {      // осторожно, я хз как сплититься пустая строчка
-            headers.add(params[i]);
+        while (params.length > i && !params[i].equals("")) {      // осторожно, я хз как сплититься пустая строчка
+            builder.addHeader(params[i]);
             i++;
         }
 
-        for (; i < params.length; i++) {
-            body += params[i];
+
+        if (type == RequestType.GET) return;
+        StringBuilder bodyBuilder = new StringBuilder();
+        for (i++; i < params.length; i++) {
+            bodyBuilder.append(params[i]).append("\n");
         }
+        builder.setBody(bodyBuilder.toString());
 
 
     }
 
-    public HttpRequest() throws WrongHttpCreatingException{
+    public HttpRequest() throws WrongHttpCreatingException {
+
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(type.toString())
+                .append(" ")
+                .append(path)
+                .append(parameters)
+                .append(" ")
+                .append(version)
+                .append("\n");
+
+        for (String pairs : headers) {
+            stringBuilder.append(pairs).append("\n");
+        }
+
+        stringBuilder.append("\n");
+
+        if (type != RequestType.GET) stringBuilder.append(body);
+
+        return stringBuilder.toString();
 
     }
 
@@ -127,20 +157,20 @@ public class HttpRequest {
         }
 
         @Override
-        public HttpRequestBuilderImpl setHeader(String s) {
+        public HttpRequestBuilderImpl addHeader(String s) {
             HttpRequest.this.headers.add(s);
             return this;
         }
 
         @Override
-        public HttpRequestBuilderImpl setHeader(Collection<String> collection) {
+        public HttpRequestBuilderImpl addHeader(Collection<String> collection) {
             HttpRequest.this.headers.addAll(collection);
             return this;
         }
 
         @Override
         public HttpRequestBuilderImpl setBody(String s) {
-            if (type != RequestType.GET)  HttpRequest.this.body = s;
+            if (type != RequestType.GET) HttpRequest.this.body = s;
             return this;
         }
 
@@ -148,29 +178,8 @@ public class HttpRequest {
             return HttpRequest.this;
         }
 
-        public String toString() {
-            StringBuilder stringBuilder = new StringBuilder();
-
-            stringBuilder.append(type.toString())
-                    .append(path)
-                    .append(parameters)
-                    .append(version)
-                    .append("\n");
-
-            for (String pairs : headers) {
-                stringBuilder.append(pairs).append("\n");
-            }
-
-            stringBuilder.append("\n");
-
-            if (type != RequestType.GET) stringBuilder.append(body);
-
-            return stringBuilder.toString();
-
-        }
 
     }
-
 
 
 }

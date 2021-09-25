@@ -19,12 +19,9 @@ public class Server {
             Socket clientSocket = serverSocket.accept();
 
             try (BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8))) {
-            // TODO It's just test code
-            // I have to delete this and create HTTP Request that will be parse in Server Logic Package
-                System.out.println();
-                while (input.ready()) {
-                    System.out.println(input.readLine());
-                }
+
+
+
 
                 clientSocket.close();
             }

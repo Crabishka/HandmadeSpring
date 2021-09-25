@@ -42,14 +42,14 @@ public interface HttpRequestBuilder {
     /**
      * @param s pair header: value
      */
-    default HttpRequestBuilder setHeader(String s) {
+    default HttpRequestBuilder addHeader(String s) {
         return this;
     }
 
     /**
      * @param collection of strings (header: value)
      */
-    default HttpRequestBuilder setHeader(Collection<String> collection) {
+    default HttpRequestBuilder addHeader(Collection<String> collection) {
         return this;
     }
 
