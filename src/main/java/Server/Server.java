@@ -1,8 +1,10 @@
 package Server;
 
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class Server {
@@ -17,25 +19,19 @@ public class Server {
         while (true) {
 
             Socket clientSocket = serverSocket.accept();
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+
+            try (BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
+                 PrintWriter output = new PrintWriter(clientSocket.getOutputStream())) {
+
+                System.out.println();
+                while (input.ready()) {
+                    System.out.println(input.readLine());
+                }
 
 
-            File file = new File("src/main/resources/index.html");
-            FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            StringBuilder stringBuilder = new StringBuilder();
-
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                stringBuilder.append(line);
+                clientSocket.close();
             }
 
-
-            out.write("HTTP/1.0 200 OK \r\n" + "Content-type: text/html \r\n" + "\r\n" + stringBuilder.toString());
-
-
-            out.close();
-            clientSocket.close();
         }
 
     }
