@@ -5,7 +5,6 @@ import java.util.Collection;
 public interface HttpRequestBuilder {
 
     /**
-     *
      * @param type is type of request
      */
     default void setRequestType(RequestType type) {
@@ -61,7 +60,13 @@ public interface HttpRequestBuilder {
 
     }
 
+    default String HttpRequestToSend() {
+        return null;
+    }
 
+    default HttpRequest build() {
+        return null;
+    }
 
 
 }

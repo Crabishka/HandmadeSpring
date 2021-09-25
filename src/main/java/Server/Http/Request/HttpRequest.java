@@ -111,17 +111,17 @@ public class HttpRequest {
 
         String[] kostil = firstString[1].split("\\$"); // ты че мудак, назови нормально
         path = kostil[0];
-        parameters = kostil[1];
+        if (kostil.length > 1) parameters = kostil[1];
 
         version = firstString[2];
 
         int i = 1;
-        while (!params[i].equals(" ")){      // осторожно, я хз как сплититься пустая строчка
-           headers.add(params[i]);
-           i++;
+        while (params.length > i && !params[i].equals(" ")) {      // осторожно, я хз как сплититься пустая строчка
+            headers.add(params[i]);
+            i++;
         }
 
-        for (; i<params.length; i++){
+        for (; i < params.length; i++) {
             body += params[i];
         }
 
