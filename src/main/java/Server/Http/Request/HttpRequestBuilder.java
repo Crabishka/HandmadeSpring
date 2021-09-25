@@ -7,62 +7,60 @@ public interface HttpRequestBuilder {
     /**
      * @param type is type of request
      */
-    default void setRequestType(RequestType type) {
-
+    default HttpRequestBuilder setRequestType(RequestType type) {
+        return this;
     }
 
     /**
      * @param s is path excluded host
      */
-    default void setPath(String s) {
-
+    default HttpRequestBuilder setPath(String s) {
+        return this;
     }
 
     /**
      * @param s is Host
      */
-    default void setHost(String s) {
-
+    default HttpRequestBuilder setHost(String s) {
+        return this;
     }
 
     /**
      * @param s is "?$Parameters"
      */
-    default void setParameters(String s) {
-
+    default HttpRequestBuilder setParameters(String s) {
+        return this;
     }
 
     /**
      * @param s is "HTTP:$Version"
      */
-    default void setVersion(String s) {
-
+    default HttpRequestBuilder setVersion(String s) {
+        return this;
     }
 
     /**
      * @param s pair header: value
      */
-    default void setHeader(String s) {
-
+    default HttpRequestBuilder setHeader(String s) {
+        return this;
     }
 
     /**
      * @param collection of strings (header: value)
      */
-    default void setHeader(Collection<String> collection) {
-
+    default HttpRequestBuilder setHeader(Collection<String> collection) {
+        return this;
     }
 
     /**
      * @param s is anything you want
      */
-    default void setBody(String s) {
-
+    default HttpRequestBuilder setBody(String s) {
+        return this;
     }
 
-    default String HttpRequestToSend() {
-        return null;
-    }
+
 
     default HttpRequest build() {
         return null;
