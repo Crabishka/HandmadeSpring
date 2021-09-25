@@ -1,5 +1,6 @@
 package Server.Http.Request;
 
+import Server.Http.WrongHttpCreatingException;
 import junit.framework.TestCase;
 
 public class HttpRequestTest extends TestCase {

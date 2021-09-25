@@ -1,5 +1,7 @@
 package Server.Http.Request;
 
+import Server.Http.WrongHttpCreatingException;
+
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;

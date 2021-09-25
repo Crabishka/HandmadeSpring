@@ -1,5 +1,8 @@
 package Server.Http.Response;
 
+import Server.Http.Request.HttpRequest;
+import Server.Http.WrongHttpCreatingException;
+
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,14 +11,16 @@ public class HttpResponse {
 
     HttpResponseBuilder builder = new HttpResponseBuilderImpl();
 
+    public static HttpResponseBuilderImpl newBuilder() throws WrongHttpCreatingException {
+        return new HttpResponse().new HttpResponseBuilderImpl();
+    }
+
     private String version;
     private String status;
     private List<String> headers = new LinkedList<>();
     private String body;  // пока только HTML возвращаем
 
-    public void setBuilder(HttpResponseBuilder builder) {
-        this.builder = builder;
-    }
+
 
     public void setVersion(String version) {
         this.version = version;
@@ -31,6 +36,25 @@ public class HttpResponse {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(version)
+                .append(" ")
+                .append(status)
+                .append("\n");
+
+        for (String pair : headers) {
+            stringBuilder.append(pair).append("\n");
+        }
+
+        stringBuilder.append("\n");
+        stringBuilder.append(body);
+
+        return stringBuilder.toString();
     }
 
     public class HttpResponseBuilderImpl implements HttpResponseBuilder {
@@ -67,6 +91,10 @@ public class HttpResponse {
         public HttpResponseBuilder setBody(String s) {
             HttpResponse.this.body = s;
             return this;
+        }
+
+        public HttpResponse build() {
+            return HttpResponse.this;
         }
     }
 

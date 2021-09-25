@@ -1,5 +1,6 @@
 package Server.Http.Response;
 
+import Server.Http.Request.HttpRequest;
 import Server.Http.Request.HttpRequestBuilder;
 
 import java.util.Collection;
@@ -33,6 +34,10 @@ public interface HttpResponseBuilder {
 
     default HttpResponseBuilder setBody(String s) {
         return this;
+    }
+
+    default HttpResponse build() {
+        return null;
     }
 
 

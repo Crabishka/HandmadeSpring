@@ -1,11 +1,11 @@
 package Server.ServerLogic;
 
 import Server.Http.Request.HttpRequest;
-import Server.Http.Request.WrongHttpCreatingException;
+import Server.Http.Request.RequestType;
+import Server.Http.WrongHttpCreatingException;
 import Server.Http.Response.HttpResponse;
 
-import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * this class hasn't any state
@@ -13,8 +13,19 @@ import java.io.IOException;
  */
 public class ServerService {
 
-    public static HttpResponse getHttpResponse(HttpRequest httpRequest){
-        return null;
+    public static HttpResponse getHttpResponse(HttpRequest httpRequest) throws WrongHttpCreatingException, IOException {
+        RequestType type = httpRequest.getType();
+        if (type == RequestType.GET) {
+            String path = httpRequest.getPath();
+            String filePath = "src/main/resources" + path;
+            HttpResponse httpResponse = HttpResponse.newBuilder().setVersion("HTTP/1.0")
+                    .setStatus("200 OK")
+                    .addHeader("Content-type: text/html")
+                    .setBody(readTextFromFile(new File(filePath)))
+                    .build();
+            return httpResponse;
+        } else return null;
+
     }
 
     public static HttpRequest getHttpRequest(BufferedReader input) throws IOException, WrongHttpCreatingException {
@@ -23,6 +34,19 @@ public class ServerService {
             stringBuilder.append(input.readLine());
         }
         return new HttpRequest(stringBuilder.toString());
+    }
+
+    private static String readTextFromFile(File file) throws IOException {
+        StringBuilder stringBuilder = new StringBuilder();
+        FileReader fileReader = new FileReader(file);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        String line;
+        while ((line = bufferedReader.readLine()) != null) {
+            stringBuilder.append(line);
+        }
+        fileReader.close();
+        bufferedReader.close();
+        return stringBuilder.toString();
     }
 
 
