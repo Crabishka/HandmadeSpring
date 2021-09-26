@@ -28,6 +28,9 @@ public class Server {
             ) {
 
 
+
+                while (!input.ready()); // Спасибо за пустую строчку
+
                 HttpRequest httpRequest = ServerService.getHttpRequest(input);
                 HttpResponse httpResponse = ServerService.getHttpResponse(httpRequest);
                 out.println(httpResponse.toString());
