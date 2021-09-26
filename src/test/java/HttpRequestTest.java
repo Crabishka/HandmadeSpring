@@ -1,5 +1,5 @@
-package Server.Http.Request;
-
+import Server.Http.Request.HttpRequest;
+import Server.Http.Request.RequestType;
 import Server.Http.WrongHttpCreatingException;
 import junit.framework.TestCase;
 

@@ -27,6 +27,7 @@ public class Server {
                  PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream())), true)
             ) {
 
+
                 HttpRequest httpRequest = ServerService.getHttpRequest(input);
                 HttpResponse httpResponse = ServerService.getHttpResponse(httpRequest);
                 out.println(httpResponse.toString());

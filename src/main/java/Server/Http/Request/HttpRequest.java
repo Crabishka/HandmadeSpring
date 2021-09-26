@@ -71,7 +71,7 @@ public class HttpRequest {
         /**
          * need to be careful 'cause link should not be empty. "\\" at least
          */
-        String[] link = requestLine[1].split("\\$");
+        String[] link = requestLine[1].split("\\?");
         builder.setPath(link[0]);
         if (link.length > 1) builder.setParameters(link[1]);
 
@@ -148,7 +148,7 @@ public class HttpRequest {
 
         @Override
         public HttpRequestBuilderImpl setParameters(String s) {
-            HttpRequest.this.parameters = "$" + s;
+            HttpRequest.this.parameters = "?" + s;
             return this;
         }
 

@@ -1,5 +1,3 @@
-package Response;
-
 import Server.Http.Response.HttpResponse;
 import Server.Http.WrongHttpCreatingException;
 import junit.framework.TestCase;
