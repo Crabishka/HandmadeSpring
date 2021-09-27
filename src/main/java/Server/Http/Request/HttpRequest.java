@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Class HttpRequest is used for create safe HTTP Request instead of String Solution is Server class
+ * Class HttpRequest is used for create safe HTTP Request instead of String Solution in Server class
  */
 
 public class HttpRequest {
