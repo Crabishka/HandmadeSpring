@@ -12,10 +12,10 @@ import java.util.List;
 
 public class HttpRequest {
 
-    HttpRequestBuilder builder = new HttpRequestBuilderImpl();
+    HttpRequestBuilder builder = new HttpRequestBuilder();
 
-    public static HttpRequestBuilderImpl newBuilder() throws WrongHttpCreatingException {
-        return new HttpRequest().new HttpRequestBuilderImpl();
+    public static HttpRequestBuilder newBuilder() throws WrongHttpCreatingException {
+        return new HttpRequest().new HttpRequestBuilder();
     }
 
     public RequestType getType() {
@@ -122,56 +122,54 @@ public class HttpRequest {
 
     }
 
-    public class HttpRequestBuilderImpl implements HttpRequestBuilder {
+    public class HttpRequestBuilder {
 
-        private HttpRequestBuilderImpl() {
+        private HttpRequestBuilder() {
 
         }
 
-        @Override
-        public HttpRequestBuilderImpl setRequestType(RequestType type) {
+        public HttpRequestBuilder setRequestType(RequestType type) {
             HttpRequest.this.type = type;
             return this;
         }
 
-        @Override
-        public HttpRequestBuilderImpl setPath(String s) {
+
+        public HttpRequestBuilder setPath(String s) {
             HttpRequest.this.path = s;
             return this;
         }
 
-        @Override
-        public HttpRequestBuilderImpl setHost(String s) {
+
+        public HttpRequestBuilder setHost(String s) {
             HttpRequest.this.host = s;
             return this;
         }
 
-        @Override
-        public HttpRequestBuilderImpl setParameters(String s) {
+        public HttpRequestBuilder setParameters(String s) {
             HttpRequest.this.parameters = "?" + s;
             return this;
         }
 
-        @Override
-        public HttpRequestBuilderImpl setVersion(String s) {
+
+        public HttpRequestBuilder setVersion(String s) {
             HttpRequest.this.version = s;
             return this;
         }
 
-        @Override
-        public HttpRequestBuilderImpl addHeader(String s) {
+
+        public HttpRequestBuilder addHeader(String s) {
             HttpRequest.this.headers.add(s);
             return this;
         }
 
-        @Override
-        public HttpRequestBuilderImpl addHeader(Collection<String> collection) {
+
+        public HttpRequestBuilder addHeader(Collection<String> collection) {
             HttpRequest.this.headers.addAll(collection);
             return this;
         }
 
-        @Override
-        public HttpRequestBuilderImpl setBody(String s) {
+
+        public HttpRequestBuilder setBody(String s) {
             if (type != RequestType.GET) HttpRequest.this.body = s;
             return this;
         }

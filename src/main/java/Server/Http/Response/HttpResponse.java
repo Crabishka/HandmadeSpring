@@ -1,24 +1,39 @@
 package Server.Http.Response;
 
-import Server.Http.Request.HttpRequest;
 import Server.Http.WrongHttpCreatingException;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 public class HttpResponse {
 
-    HttpResponseBuilder builder = new HttpResponseBuilderImpl();
+    HttpResponseBuilder builder = new HttpResponseBuilder();
 
-    public static HttpResponseBuilderImpl newBuilder() throws WrongHttpCreatingException {
-        return new HttpResponse().new HttpResponseBuilderImpl();
+    public static HttpResponseBuilder newBuilder() throws WrongHttpCreatingException {
+        return new HttpResponse().new HttpResponseBuilder();
     }
 
     private String version;
+
+    public String getVersion() {
+        return version;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public List<String> getHeaders() {
+        return headers;
+    }
+
+    public byte[] getBody() {
+        return body;
+    }
+
     private String status;
     private List<String> headers = new LinkedList<>();
-    private String body;  // пока только HTML возвращаем
+    private byte[] body;
 
 
 
@@ -34,12 +49,16 @@ public class HttpResponse {
         this.headers = headers;
     }
 
-    public void setBody(String body) {
+    public void setBody(byte[] body) {
         this.body = body;
     }
 
-    @Override
-    public String toString() {
+    public void setBody(String body){
+        this.body = body.getBytes(StandardCharsets.UTF_8);
+    }
+
+
+    public byte[] toByteArray() {
         StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append(version)
@@ -52,46 +71,52 @@ public class HttpResponse {
         }
 
         stringBuilder.append("\n");
-        stringBuilder.append(body);
-
-        return stringBuilder.toString();
+        byte[] bytes = stringBuilder.toString().getBytes(StandardCharsets.UTF_8);
+        byte[] res = Arrays.copyOf(bytes,bytes.length + body.length);
+        System.arraycopy(body,0,res,bytes.length,body.length);
+        return res;
     }
 
-    public class HttpResponseBuilderImpl implements HttpResponseBuilder {
 
-        private HttpResponseBuilderImpl() {
+
+    public class HttpResponseBuilder {
+
+        private HttpResponseBuilder() {
 
         }
 
-        @Override
+
         public HttpResponseBuilder setVersion(String s) {
             HttpResponse.this.version = s;
             return this;
         }
 
-        @Override
         public HttpResponseBuilder setStatus(String s) {
             HttpResponse.this.status = s;
             return this;
         }
 
-        @Override
         public HttpResponseBuilder addHeader(String s) {
             HttpResponse.this.headers.add(s);
             return this;
         }
 
-        @Override
+
         public HttpResponseBuilder addHeader(Collection<String> collection) {
             HttpResponse.this.headers.addAll(collection);
             return this;
         }
 
-        @Override
-        public HttpResponseBuilder setBody(String s) {
+        public HttpResponseBuilder setBody(byte[] s) {
             HttpResponse.this.body = s;
             return this;
         }
+
+        public HttpResponseBuilder setBody(String s) {
+            HttpResponse.this.body = s.getBytes(StandardCharsets.UTF_8);
+            return this;
+        }
+
 
         public HttpResponse build() {
             return HttpResponse.this;
