@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.*;
-import java.util.Arrays;
+import java.util.Properties;
 
 /**
  * this class hasn't any state
@@ -17,14 +17,23 @@ import java.util.Arrays;
  */
 public class ServerService {
 
+    FileInputStream fis;
+    Properties property = new Properties();
+
+
+
+    public static void sendResponse() {
+
+    }
+
     public static HttpResponse getHttpResponse(HttpRequest httpRequest) throws WrongHttpCreatingException, IOException {
         RequestType type = httpRequest.getType();
         if (type == RequestType.GET) {
 
             String path = httpRequest.getPath();
-            String filePath = "src/main/resources" + path;
+            String filePath = GetProperties.getProperty("path") + path;
 
-            HttpResponse.HttpResponseBuilderImpl builder = HttpResponse.newBuilder();
+            HttpResponse.HttpResponseBuilder builder = HttpResponse.newBuilder();
 
 
             String extension = getExtension(path);
@@ -33,14 +42,22 @@ public class ServerService {
                 builder.setVersion("HTTP/1.1").setStatus("200 OK")
                         .addHeader("Content-type: text/html")
                         .setBody(readTextFromFile(new File(filePath)));
-            } else if (extension.equals("jpg")){
+            } else if (extension.equals("jpg")) {
+                byte[] image = readAllBytes(new File(filePath));
                 builder.setVersion("HTTP/1.1").setStatus("200 OK")
                         .addHeader("Content-type: image/jpeg")
-                        .setBody(readJpegFromFile(new File(filePath)));
-            } else if (extension.equals("ico")){
+                        .addHeader("Content-Length: " + image.length)
+                        .setBody(image);
+            } else if (extension.equals("ico")) {
+                byte[] image = readAllBytes(new File(filePath));
+                builder.setVersion("HTTP/1.1").setStatus("200 OK")
+                        .addHeader("Content-type: image/jpeg")
+                        .addHeader("Content-Length: " + image.length)
+                        .setBody(image); // затычка
+            } else if (extension.equals("txt")) {
                 builder.setVersion("HTTP/1.1").setStatus("200 OK")
                         .addHeader("Content-type: text/html")
-                        .setBody("NO ICONS ON MY DUTY");
+                        .setBody(readTextFromFile(new File(filePath)));
             }
 
             return builder.build();
@@ -63,10 +80,10 @@ public class ServerService {
         return extension;
     }
 
-    public static HttpRequest getHttpRequest(BufferedReader input) throws IOException, WrongHttpCreatingException  {
+    public static HttpRequest getHttpRequest(BufferedReader input) throws IOException, WrongHttpCreatingException {
         StringBuilder stringBuilder = new StringBuilder();
         while (input.ready()) {
-            stringBuilder.append(input.readLine());
+            stringBuilder.append(input.readLine()).append("\n");
         }
         return new HttpRequest(stringBuilder.toString());
     }
@@ -84,10 +101,11 @@ public class ServerService {
         return stringBuilder.toString();
     }
 
-    private static String readJpegFromFile(File file) throws IOException {
-        BufferedImage myPicture = ImageIO.read(file);
-        byte[] imageBytes = ((DataBufferByte) myPicture.getData().getDataBuffer()).getData();
-        return imageBytes.toString();
+    public static byte[] readAllBytes(File file) throws IOException {
+        FileInputStream fileInputStream = new FileInputStream(file);
+        byte[] bytes = new byte[fileInputStream.available()];
+        fileInputStream.read(bytes, 0, bytes.length);
+        return bytes;
     }
 
 
