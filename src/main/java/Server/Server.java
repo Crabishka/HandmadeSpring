@@ -1,17 +1,15 @@
 package Server;
 
+import Server.Docker.DispatcherServlet;
 import Server.Http.Request.HttpRequest;
-import Server.Http.Response.HttpResponse;
-import Server.Http.WrongHttpCreatingException;
 import Server.ServerLogic.GetProperties;
-import Server.ServerLogic.ServerService;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
-public class Server {
+public class Server implements Runnable {
 
     private static int PORT;
 
@@ -23,34 +21,26 @@ public class Server {
         }
     }
 
-    private static InputStream in;
 
-    public static void main(String[] args) throws IOException {
+    @Override
+    public void run() {
 
-        ServerSocket serverSocket = new ServerSocket(PORT);
-
-        while (true) {
-
+        try {
+            ServerSocket serverSocket = new ServerSocket(PORT);
             Socket clientSocket = serverSocket.accept();
-
             try (BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
                  OutputStream outputStream = clientSocket.getOutputStream()
             ) {
+                while (!input.ready());
+                HttpRequest httpRequest = new HttpRequest(input);
+                new DispatcherServlet().doResponse(httpRequest,outputStream);
 
 
-                while (!input.ready()) ; // пустая строчка
-
-                HttpRequest httpRequest = ServerService.getHttpRequest(input);
-                HttpResponse httpResponse = ServerService.getHttpResponse(httpRequest);
-                outputStream.write(httpResponse.toByteArray());
-
-
-                clientSocket.close();
-            } catch (WrongHttpCreatingException e) {
-                e.printStackTrace();
             }
 
-        }
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
