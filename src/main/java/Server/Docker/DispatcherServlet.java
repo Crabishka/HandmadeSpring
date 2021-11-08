@@ -73,7 +73,7 @@ public class DispatcherServlet implements ServletInterface {
         String body = null;
         try {
             body
-                    = (String) method.invoke(null, "2", "3");
+                    = (String) method.invoke(null, params.toArray());
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {

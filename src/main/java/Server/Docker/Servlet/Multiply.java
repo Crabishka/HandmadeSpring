@@ -8,7 +8,7 @@ import Server.Docker.RequestMapping;
 public class Multiply{
 
     @GetMapping
-    public String doGet(@Param(name = "a") String a, @Param(name = "b") String b) {
+    public static String doGet(@Param(name = "a") String a, @Param(name = "b") String b) {
         if (a == null || b == null) return "error";
         return String.valueOf(Integer.parseInt(a) * Integer.parseInt(b));
     }

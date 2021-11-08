@@ -38,7 +38,7 @@ public class Server {
             HttpRequest httpRequest = new HttpRequest(input);
             DispatcherServlet.getInstance().doResponse(httpRequest, outputStream);
 
-
+            clientSocket.close();
         }
 
     }
