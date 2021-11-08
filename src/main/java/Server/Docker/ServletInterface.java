@@ -1,17 +1,15 @@
 package Server.Docker;
 
-import Server.Docker.GetMapping;
 import Server.Http.Request.HttpRequest;
 import Server.Http.Response.HttpResponse;
+
+import java.io.IOException;
 
 public interface ServletInterface {
 
     @GetMapping
-    void doGet(HttpRequest request, HttpResponse response);
+    void doGet(HttpRequest request, HttpResponse response) throws IOException;
 
-    /*
-    There are methods to not use reflection
-     */
     default void doPost(HttpRequest request, HttpResponse response) {
 
     }

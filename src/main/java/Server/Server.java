@@ -9,7 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
-public class Server implements Runnable {
+public class Server {
 
     private static int PORT;
 
@@ -22,25 +22,20 @@ public class Server implements Runnable {
     }
 
 
-    @Override
-    public void run() {
+    public static void main(String[] args) throws IOException {
 
-        try {
-            ServerSocket serverSocket = new ServerSocket(PORT);
+        ServerSocket serverSocket = new ServerSocket(PORT);
+
+        while (true) {
             Socket clientSocket = serverSocket.accept();
             try (BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
-                 OutputStream outputStream = clientSocket.getOutputStream()
-            ) {
+                 OutputStream outputStream = clientSocket.getOutputStream()) {
                 while (!input.ready());
                 HttpRequest httpRequest = new HttpRequest(input);
-                new DispatcherServlet().doResponse(httpRequest,outputStream);
-
-
+                DispatcherServlet.getInstance().doResponse(httpRequest, outputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

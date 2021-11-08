@@ -50,7 +50,7 @@ public class HttpResponse {
         this.body = body;
     }
 
-    public void send() {
+    public void send() throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(version).append(" ").append(status).append("\n");
         for (Map.Entry<String, String> header : headers.entrySet()) {
@@ -58,15 +58,9 @@ public class HttpResponse {
         }
         stringBuilder.append("\n");
         byte[] bytes = stringBuilder.toString().getBytes(StandardCharsets.UTF_8);
-        byte[] res = Arrays.copyOf(bytes,bytes.length + body.length);
-        System.arraycopy(body,0,res,bytes.length,body.length);
-        try {
-            output.write(res);
-            output.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        byte[] res = Arrays.copyOf(bytes, bytes.length + body.length);
+        System.arraycopy(body, 0, res, bytes.length, body.length);
+        output.write(res);
 
     }
 
