@@ -53,7 +53,6 @@ public class HttpRequest {
     private void parseInput(BufferedReader in) throws IOException {
 
         /*
-        TODO
         Path - check
         RequestType - check
         params - check
@@ -68,7 +67,7 @@ public class HttpRequest {
         String[] lines = s.split("\n");
         String[] requestLine = lines[0].split(" ");
 
-        switch (requestLine[0]) { // may create NullPointerException
+        switch (requestLine[0]) {
             case "GET":
                 requestType = RequestType.GET;
                 break;
