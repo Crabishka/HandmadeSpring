@@ -1,15 +1,17 @@
-import ru.vsu.csf.george.pryadchenko.server.docker.*;
+import ru.vsu.csf.george.pryadchenko.server.dockerLogic.GetMapping;
+import ru.vsu.csf.george.pryadchenko.server.dockerLogic.Param;
+import ru.vsu.csf.george.pryadchenko.server.dockerLogic.RequestMapping;
+import ru.vsu.csf.george.pryadchenko.server.dockerLogic.Servlet;
 import ru.vsu.csf.george.pryadchenko.server.logic.GetProperties;
 import junit.framework.TestCase;
 import org.reflections.Reflections;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.nio.file.Files;
+import java.util.*;
 
 public class ReflectionTests extends TestCase {
 
@@ -72,6 +74,15 @@ public class ReflectionTests extends TestCase {
 
             }
         }
+
+    }
+
+    public void testPackage() throws IOException {
+        String pathToPackage = "src/main/java/ru/vsu/csf/george/pryadchenko/server/docker".replace('.', '/');
+        File file = new File(pathToPackage);
+        List<File> list = Arrays.asList(file.listFiles());
+        System.out.println(list.get(1).getName());
+        System.out.println(list.get(1).getPath());
 
     }
 

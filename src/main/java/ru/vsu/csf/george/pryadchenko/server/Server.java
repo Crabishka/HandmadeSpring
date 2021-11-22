@@ -2,6 +2,7 @@ package ru.vsu.csf.george.pryadchenko.server;
 
 import ru.vsu.csf.george.pryadchenko.server.docker.math.DispatcherServlet;
 import ru.vsu.csf.george.pryadchenko.server.http.request.HttpRequest;
+import ru.vsu.csf.george.pryadchenko.server.http.response.HttpResponse;
 
 
 import java.io.*;
@@ -32,8 +33,6 @@ public class Server extends Thread {
         try {
             while (!input.ready()) ;
             HttpRequest httpRequest = new HttpRequest(input);
-            String path = httpRequest.getPath();
-
 
             clientSocket.close();
         } catch (Exception e) {

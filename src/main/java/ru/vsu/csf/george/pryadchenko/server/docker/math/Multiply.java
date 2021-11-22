@@ -1,8 +1,8 @@
 package ru.vsu.csf.george.pryadchenko.server.docker.math;
 
-import ru.vsu.csf.george.pryadchenko.server.docker.GetMapping;
-import ru.vsu.csf.george.pryadchenko.server.docker.Param;
-import ru.vsu.csf.george.pryadchenko.server.docker.RequestMapping;
+import ru.vsu.csf.george.pryadchenko.server.dockerLogic.GetMapping;
+import ru.vsu.csf.george.pryadchenko.server.dockerLogic.Param;
+import ru.vsu.csf.george.pryadchenko.server.dockerLogic.RequestMapping;
 
 @RequestMapping("/multiply")
 public class Multiply {

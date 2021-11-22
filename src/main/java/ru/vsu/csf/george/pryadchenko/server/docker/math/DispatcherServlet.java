@@ -1,6 +1,9 @@
 package ru.vsu.csf.george.pryadchenko.server.docker.math;
 
-import ru.vsu.csf.george.pryadchenko.server.docker.*;
+import ru.vsu.csf.george.pryadchenko.server.dockerLogic.GetMapping;
+import ru.vsu.csf.george.pryadchenko.server.dockerLogic.Param;
+import ru.vsu.csf.george.pryadchenko.server.dockerLogic.RequestMapping;
+import ru.vsu.csf.george.pryadchenko.server.dockerLogic.WebSocket;
 import ru.vsu.csf.george.pryadchenko.server.http.request.HttpRequest;
 import ru.vsu.csf.george.pryadchenko.server.http.request.RequestType;
 import ru.vsu.csf.george.pryadchenko.server.http.response.HttpResponse;
@@ -17,7 +20,7 @@ import java.util.stream.Collectors;
 
 
 @WebSocket("/math")
-public class DispatcherServlet extends Servlet {
+public class DispatcherServlet{
 
 
     private Map<String, Class<?>> controllers = new HashMap<>();

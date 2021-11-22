@@ -1,4 +1,4 @@
-package ru.vsu.csf.george.pryadchenko.server.docker;
+package ru.vsu.csf.george.pryadchenko.server.dockerLogic;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
