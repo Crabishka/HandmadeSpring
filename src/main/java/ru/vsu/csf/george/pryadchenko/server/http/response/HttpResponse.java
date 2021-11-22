@@ -1,7 +1,7 @@
-package Server.Http.Response;
+package ru.vsu.csf.george.pryadchenko.server.http.response;
 
 
-import Server.ServerLogic.GetProperties;
+import ru.vsu.csf.george.pryadchenko.server.logic.GetProperties;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,6 +30,14 @@ public class HttpResponse {
         }
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
     private String status = "200 OK";
     private Map<String, String> headers = new HashMap<>();
     private byte[] body;
@@ -54,8 +62,9 @@ public class HttpResponse {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(version).append(" ").append(status).append("\n");
         for (Map.Entry<String, String> header : headers.entrySet()) {
-            stringBuilder.append(header.getKey()).append(":").append(header.getValue());
+            stringBuilder.append(header.getKey()).append(":").append(header.getValue()).append("\n");
         }
+        // TODO add encoding
         stringBuilder.append("\n");
         byte[] bytes = stringBuilder.toString().getBytes(StandardCharsets.UTF_8);
         byte[] res = Arrays.copyOf(bytes, bytes.length + body.length);

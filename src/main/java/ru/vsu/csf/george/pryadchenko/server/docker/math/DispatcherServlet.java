@@ -1,28 +1,31 @@
-package Server.Docker;
+package ru.vsu.csf.george.pryadchenko.server.docker.math;
 
-import Server.Http.Request.HttpRequest;
-import Server.Http.Request.RequestType;
-import Server.Http.Response.HttpResponse;
-import Server.ServerLogic.GetProperties;
+import ru.vsu.csf.george.pryadchenko.server.docker.*;
+import ru.vsu.csf.george.pryadchenko.server.http.request.HttpRequest;
+import ru.vsu.csf.george.pryadchenko.server.http.request.RequestType;
+import ru.vsu.csf.george.pryadchenko.server.http.response.HttpResponse;
+import ru.vsu.csf.george.pryadchenko.server.logic.GetProperties;
 import org.reflections.Reflections;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class DispatcherServlet implements ServletInterface {
 
-    private static DispatcherServlet instance;
+@WebSocket("/math")
+public class DispatcherServlet extends Servlet {
+
+
     private Map<String, Class<?>> controllers = new HashMap<>();
 
     public DispatcherServlet() {
         Reflections reflections = null;
         try {
-            reflections = new Reflections(GetProperties.getProperty("servlet_docker"));
+            reflections = new Reflections(GetProperties.getProperty("servlet_docker")); // TODO переписать
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -35,21 +38,13 @@ public class DispatcherServlet implements ServletInterface {
         }
     }
 
-    public static DispatcherServlet getInstance() {
-        if (instance == null) {
-            instance = new DispatcherServlet();
-        }
-        return instance;
-    }
-    /*
-     Servlet (controller) return body of response
-     */
 
-    @Override
     public void doGet(HttpRequest request, HttpResponse response) throws IOException {
         Class<?> servlet = controllers.get(request.getPath());
         if (servlet == null) return;
-        Method[] methods = servlet.getMethods();
+        List<Method> methods = Arrays.stream(servlet.getMethods()).filter(method -> {
+            return method.getAnnotation(GetMapping.class) != null;  // TODO
+        }).collect(Collectors.toList());
         Method method = null;
 
         for (Method aMethod : methods) {
@@ -61,51 +56,33 @@ public class DispatcherServlet implements ServletInterface {
 
         List<String> params = new ArrayList<>();
         Map<String, String> map = request.getParams();
-        Annotation[][] paramsAnnotation = method.getParameterAnnotations(); // how to parse this..............
+        Annotation[][] paramsAnnotation = method.getParameterAnnotations();
 
         for (Annotation[] annotations : paramsAnnotation) {
             for (Annotation annotation : annotations) {
                 Param newAnnotation = (Param) annotation;
-                params.add(map.get(newAnnotation.name()) == null ? "" : map.get(newAnnotation.name()));
+                params.add(map.get(newAnnotation.name()) == null ? "" : map.get(newAnnotation.name())); // TODO обработка аннотаций параметров
             }
         }
 
         String body = null;
         try {
             body = (String) method.invoke(null, params.toArray());  // FIXME
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (Exception e) {
+            response.setStatus("418 I’m a teapot");
+            body = response.getStatus();
             e.printStackTrace();
         }
+        response.putHeader("Content-Type", "text/html; charset=utf-8");
         response.setBody(body.getBytes(StandardCharsets.UTF_8));
         response.send();
     }
 
-    @Override
-    public void doPost(HttpRequest request, HttpResponse response) {
-        // TODO
-    }
 
     public void doResponse(HttpRequest request, OutputStream outputStream) throws IOException {
-           /*
-        Получили запрос - check
-        распарсили - check
-        получили путь - check
-        из мапы получили класс - check
-        получили тип запроса - check
-        передали дальше - check
-         */
-
         RequestType type = request.getRequestType();
         switch (type) {
             case GET:
-                doGet(request, new HttpResponse(outputStream));
-                break;
-            case POST:
-                doPost(request, new HttpResponse(outputStream));
-                break;
-            default:
                 doGet(request, new HttpResponse(outputStream));
                 break;
         }

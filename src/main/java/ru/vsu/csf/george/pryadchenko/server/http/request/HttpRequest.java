@@ -1,9 +1,8 @@
-package Server.Http.Request;
+package ru.vsu.csf.george.pryadchenko.server.http.request;
 
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package Server.ServerLogic;
+package ru.vsu.csf.george.pryadchenko.server.logic;
 
 import java.io.*;
 

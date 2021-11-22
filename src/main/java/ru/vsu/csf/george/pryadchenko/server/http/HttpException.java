@@ -1,4 +1,4 @@
-package Server.Http;
+package ru.vsu.csf.george.pryadchenko.server.http;
 
 public class HttpException extends RuntimeException{
 
