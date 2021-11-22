@@ -7,15 +7,24 @@ import java.util.*;
 public class Bean {
 
     List<Annotation> classAnnotation;
-    Map<Method, List<Annotation>> methods = new HashMap<>();
+    Map<Annotation, List<Method>> methods = new HashMap<>();
     Map<Method, List<Param>> paramsOfMethods = new HashMap<>();
 
     public Bean(Class<?> parsedClass) {
         classAnnotation = Arrays.asList(parsedClass.getAnnotations());
 
-        Method[] methods = parsedClass.getMethods();
+        Method[] methods = parsedClass.getDeclaredMethods();
         for (Method method : methods) {
-            this.methods.put(method, Arrays.asList(method.getAnnotations()));
+            Annotation[] methodAnnotations = method.getAnnotations();
+            for (Annotation annotation : methodAnnotations) {
+                if (this.methods.containsKey(annotation)) {
+                    this.methods.get(annotation).add(method);
+                } else {
+                    List<Method> list = new ArrayList<>();
+                    list.add(method);
+                    this.methods.put(annotation, list);
+                }
+            }
             List<Param> params = new ArrayList<>();
 
             Annotation[][] paramsAnnotation = method.getParameterAnnotations();
@@ -28,6 +37,14 @@ public class Bean {
             this.paramsOfMethods.put(method, params);
         }
 
+    }
+
+    public List<Method> getMethodsByAnnotation(Class<GetMapping> annotation) { // FIXME
+        return this.methods.get(annotation);
+    }
+
+    public List<Param> getParamsByMethod(Method method) {
+        return this.paramsOfMethods.get(method);
     }
 
 }

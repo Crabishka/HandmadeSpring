@@ -29,6 +29,7 @@ public class Application {
 
     public static void main(String[] args) throws IOException {
         createServlet();
+        drawTree();
         ServerSocket s = new ServerSocket(PORT);
         try {
             while (true) {
@@ -46,6 +47,9 @@ public class Application {
         }
     }
 
+    public static Servlet getServlet(String name){
+        return dispatchers.get(name);
+    }
 
     public static List<File> getAllPackage() throws IOException {
         String pathToPackage = GetProperties.getProperty("servlet_docker").replace('.', '/');
@@ -55,8 +59,23 @@ public class Application {
 
     public static void createServlet() throws IOException {
         for (File file : getAllPackage()) {
-            dispatchers.put(file.getName(), new Servlet(file.getPath().replace('\\', '.')));
+            dispatchers.put(file.getName(), new Servlet(file.getPath().replace('\\', '.')
+                    .replace("src.main.java.", ""))); // FIXME FIXME FIXME FIXME FIXME FIXME FIXME
         }
+    }
+
+    public static void drawTree(){
+        System.out.println("      ccee88oo\n" +
+                "  C8O8O8Q8PoOb o8oo\n" +
+                " dOB69QO8PdUOpugoO9bD\n" +
+                "CgggbU8OU qOp qOdoUOdcb\n" +
+                "    6OuU  /p u gcoUodpP\n" +
+                "      \\\\\\//  /douUP\n" +
+                "        \\\\\\//\n" +
+                "         ||||\\\n" +
+                "         |||\\/\n" +
+                "         |||||\n" +
+                "   .....//||||\\....");
     }
 
 }

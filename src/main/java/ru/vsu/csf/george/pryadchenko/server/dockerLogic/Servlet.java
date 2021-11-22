@@ -2,14 +2,16 @@ package ru.vsu.csf.george.pryadchenko.server.dockerLogic;
 
 
 import org.reflections.Reflections;
+import ru.vsu.csf.george.pryadchenko.server.Application;
 import ru.vsu.csf.george.pryadchenko.server.http.request.HttpRequest;
 import ru.vsu.csf.george.pryadchenko.server.http.request.RequestType;
 import ru.vsu.csf.george.pryadchenko.server.http.response.HttpResponse;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 public class Servlet {
 
@@ -32,7 +34,35 @@ public class Servlet {
 
 
     public void doGet(HttpRequest request, HttpResponse response) throws IOException {
+        // get Controller by parsing path
+        // get method by GetMapping annotation
+        // invoke method
+        String[] path = request.getPath().split("/");
+        Bean bean = beanMap.get("/" + path[2]);
+        List<Method> methods = bean.getMethodsByAnnotation(GetMapping.class);
+        Map<String, String> map = request.getParams();
 
+
+        for (Method method : methods) {
+            List<String> params = new ArrayList<>();
+
+            for (Param annotation : bean.getParamsByMethod(method)) {
+                params.add(map.get(annotation.name()) == null ? "" : map.get(annotation.name())); // TODO обработка аннотаций параметров
+            }
+
+            String body = null;
+            try {
+                body = (String) method.invoke(null, params.toArray());  // FIXME
+            } catch (Exception e) {
+                response.setStatus("418 I’m a teapot");
+                body = response.getStatus();
+                e.printStackTrace();
+            }
+            response.putHeader("Content-Type", "text/html; charset=utf-8");
+            response.setBody(body.getBytes(StandardCharsets.UTF_8));
+            response.send();
+
+        }
     }
 
 
