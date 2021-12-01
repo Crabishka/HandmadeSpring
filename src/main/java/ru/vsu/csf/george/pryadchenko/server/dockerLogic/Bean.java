@@ -12,7 +12,7 @@ public class Bean {
 
     String beanID = null;
     List<Annotation> classAnnotation = new ArrayList<>();
-    Map<Method, List<Class<? extends Annotation>>> methods = new HashMap<>();
+    Map<Method, List<Annotation>> methods = new HashMap<>();
     Map<Method, List<Annotation>> paramsOfMethods = new HashMap<>();
 
     public Bean(Class<?> parsedClass) {
@@ -30,9 +30,9 @@ public class Bean {
         for (Method method : methods) {
             Annotation[] methodAnnotations = method.getAnnotations();
             this.methods.put(method, new ArrayList<>());
-            List<Class<? extends Annotation>> annotations = this.methods.get(method);
+            List<Annotation> annotations = this.methods.get(method);
             for (Annotation annotation : methodAnnotations){
-                annotations.add(annotation.getClass());
+                annotations.add(annotation);
             }
             List<Annotation> params = new ArrayList<>();
 
@@ -47,9 +47,9 @@ public class Bean {
     }
 
 
-    public List<Method> getMethodsByAnnotation(Class<? extends Annotation> annotation) {
+    public List<Method> getMethodsByAnnotation(Annotation annotation) {
         List<Method> list = new ArrayList<>();
-        for (Map.Entry<Method, List<Class<? extends Annotation>>> entry : this.methods.entrySet()) {
+        for (Map.Entry<Method, List<Annotation>> entry : this.methods.entrySet()) {
             if (entry.getValue().contains(annotation)) list.add(entry.getKey());
         }
 

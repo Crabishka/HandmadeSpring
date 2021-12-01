@@ -5,6 +5,8 @@ import org.reflections.Reflections;
 import ru.vsu.csf.george.pryadchenko.server.http.request.HttpRequest;
 import ru.vsu.csf.george.pryadchenko.server.http.request.RequestType;
 import ru.vsu.csf.george.pryadchenko.server.http.response.HttpResponse;
+import sun.reflect.annotation.AnnotationParser;
+
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -26,21 +28,25 @@ public class Servlet {
         this.factory = new Factory(pack);
     }
 
+//    @GetMapping
+//    public void a(){}
 
     public void doGet(HttpRequest request, HttpResponse response) throws IOException {
         String[] path = request.getPath().split("/");
-        Bean bean = factory.getByAnnotationAndName(Controller.class,"/" + path[2]);
-        List<Method> methods = bean.getMethodsByAnnotation(GetMapping.class);
+        Bean bean = factory.getByAnnotationAndName(Controller.class, "/" + path[2]);
+
+        // FIXME Я НЕ ПОНИМАЮ, ЧТО ТУТ ПРОИСХОДИТ
+        List<Method> methods = bean.getMethodsByAnnotation(AnnotationParser.annotationForMap(GetMapping.class, Collections.singletonMap("", "")));
+
         Map<String, String> map = request.getParams();
 
 
         for (Method method : methods) {
             List<String> params = new ArrayList<>();
 
-            for (Annotation  annotation : bean.getParamsByMethod(method)) {
-                params.add(map.get( ((Param) annotation).name()) == null ? "" : map.get(((Param) annotation).name())); // TODO обработка аннотаций параметров
+            for (Annotation annotation : bean.getParamsByMethod(method)) {
+                params.add(map.get(((Param) annotation).name()) == null ? "" : map.get(((Param) annotation).name())); // TODO обработка аннотаций параметров
             }
-
 
 
             byte[] body = null;
