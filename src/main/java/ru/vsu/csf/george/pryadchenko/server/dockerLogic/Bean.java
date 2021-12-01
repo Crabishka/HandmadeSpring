@@ -11,16 +11,16 @@ import java.util.*;
 public class Bean {
 
     String beanID = null;
-    List<Class<? extends Annotation>> classAnnotation;
+    List<Annotation> classAnnotation = new ArrayList<>();
     Map<Class<? extends Annotation>, List<Method>> methods = new HashMap<>();
-    Map<Method, List<Param>> paramsOfMethods = new HashMap<>();
+    Map<Method, List<Annotation>> paramsOfMethods = new HashMap<>();
 
     public Bean(Class<?> parsedClass) {
         Annotation[] classAnnotations = parsedClass.getAnnotations();
         for (Annotation annotation : classAnnotations) {
-            if (annotation.equals(Controller.class)) {
+            this.classAnnotation.add(annotation);
+            if (annotation.annotationType().equals(Controller.class)) {
                 beanID = ((Controller) annotation).value(); // FIXME
-                this.classAnnotation.add(annotation.getClass());
             }
         }
 
@@ -36,13 +36,11 @@ public class Bean {
                     this.methods.put(annotation.annotationType(), list);
                 }
             }
-            List<Param> params = new ArrayList<>();
+            List<Annotation> params = new ArrayList<>();
 
             Annotation[][] paramsAnnotation = method.getParameterAnnotations();
             for (Annotation[] annotations : paramsAnnotation) {
-                for (Annotation annotation : annotations) {
-                    params.add((Param) annotation);
-                }
+                params.addAll(Arrays.asList(annotations));
             }
 
             this.paramsOfMethods.put(method, params);
@@ -55,11 +53,12 @@ public class Bean {
         return this.methods.get(annotation);
     }
 
-    public List<Param> getParamsByMethod(Method method) {
+    public List<Annotation> getParamsByMethod(Method method) {
         return this.paramsOfMethods.get(method);
     }
 
-    public List<Class<? extends Annotation>> getClassAnnotation() {
+
+    public List<Annotation> getClassAnnotation() {
         return classAnnotation;
     }
 
