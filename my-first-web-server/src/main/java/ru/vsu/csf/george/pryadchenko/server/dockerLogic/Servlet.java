@@ -7,6 +7,7 @@ import ru.vsu.csf.george.pryadchenko.server.http.request.RequestType;
 import ru.vsu.csf.george.pryadchenko.server.http.response.HttpResponse;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -36,9 +37,11 @@ public class Servlet {
         for (Method method : methods) {
             List<String> params = new ArrayList<>();
 
-            for (Param annotation : bean.getParamsByMethod(method)) {
-                params.add(map.get(annotation.name()) == null ? "" : map.get(annotation.name())); // TODO обработка аннотаций параметров
+            for (Annotation  annotation : bean.getParamsByMethod(method)) {
+                params.add(map.get( ((Param) annotation).name()) == null ? "" : map.get(((Param) annotation).name())); // TODO обработка аннотаций параметров
             }
+
+
 
             byte[] body = null;
             try {
@@ -48,7 +51,6 @@ public class Servlet {
                 body = response.getStatus().getBytes(StandardCharsets.UTF_16);
                 e.printStackTrace();
             }
-            response.putHeader("Content-Type", "text/html; charset=UTF-8"); // FIXME
             response.setBody(body);
             response.send();
 

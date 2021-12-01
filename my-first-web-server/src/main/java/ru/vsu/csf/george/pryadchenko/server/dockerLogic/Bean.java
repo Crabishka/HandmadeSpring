@@ -11,38 +11,34 @@ import java.util.*;
 public class Bean {
 
     String beanID = null;
-    List<Class<? extends Annotation>> classAnnotation;
-    Map<Class<? extends Annotation>, List<Method>> methods = new HashMap<>();
-    Map<Method, List<Param>> paramsOfMethods = new HashMap<>();
+    List<Annotation> classAnnotation = new ArrayList<>();
+    Map<Method, List<Class<? extends Annotation>>> methods = new HashMap<>();
+    Map<Method, List<Annotation>> paramsOfMethods = new HashMap<>();
 
     public Bean(Class<?> parsedClass) {
         Annotation[] classAnnotations = parsedClass.getAnnotations();
         for (Annotation annotation : classAnnotations) {
-            if (annotation.equals(Controller.class)) {
-                beanID = ((Controller) annotation).value(); // FIXME
-                this.classAnnotation.add(annotation.getClass());
+            this.classAnnotation.add(annotation);
+            if (annotation.annotationType().equals(Controller.class)) {
+                beanID = ((Controller) annotation).value();
             }
         }
 
+
         Method[] methods = parsedClass.getDeclaredMethods();
+
         for (Method method : methods) {
             Annotation[] methodAnnotations = method.getAnnotations();
-            for (Annotation annotation : methodAnnotations) {
-                if (this.methods.containsKey(annotation)) {
-                    this.methods.get(annotation).add(method);
-                } else {
-                    List<Method> list = new ArrayList<>();
-                    list.add(method);
-                    this.methods.put(annotation.annotationType(), list);
-                }
+            this.methods.put(method, new ArrayList<>());
+            List<Class<? extends Annotation>> annotations = this.methods.get(method);
+            for (Annotation annotation : methodAnnotations){
+                annotations.add(annotation.getClass());
             }
-            List<Param> params = new ArrayList<>();
+            List<Annotation> params = new ArrayList<>();
 
             Annotation[][] paramsAnnotation = method.getParameterAnnotations();
-            for (Annotation[] annotations : paramsAnnotation) {
-                for (Annotation annotation : annotations) {
-                    params.add((Param) annotation);
-                }
+            for (Annotation[] ParamAnnotations : paramsAnnotation) {
+                params.addAll(Arrays.asList(ParamAnnotations));
             }
 
             this.paramsOfMethods.put(method, params);
@@ -52,14 +48,20 @@ public class Bean {
 
 
     public List<Method> getMethodsByAnnotation(Class<? extends Annotation> annotation) {
-        return this.methods.get(annotation);
+        List<Method> list = new ArrayList<>();
+        for (Map.Entry<Method, List<Class<? extends Annotation>>> entry : this.methods.entrySet()) {
+            if (entry.getValue().contains(annotation)) list.add(entry.getKey());
+        }
+
+        return list;
     }
 
-    public List<Param> getParamsByMethod(Method method) {
+    public List<Annotation> getParamsByMethod(Method method) {
         return this.paramsOfMethods.get(method);
     }
 
-    public List<Class<? extends Annotation>> getClassAnnotation() {
+
+    public List<Annotation> getClassAnnotation() {
         return classAnnotation;
     }
 
