@@ -14,11 +14,8 @@ import java.util.Map;
 HttpResponse can send response by itself
  */
 public class HttpResponse {
-    public OutputStream getOutput() {
-        return output;
-    }
 
-    private OutputStream output;
+    private final OutputStream output;
 
     private String version;
 
@@ -39,11 +36,11 @@ public class HttpResponse {
     }
 
     private String status = "200 OK";
-    private Map<String, String> headers = new HashMap<>();
+    private final Map<String, String> headers = new HashMap<>();
     private byte[] body;
 
-    public String getHeader(Object key) {
-        return headers.get(key);
+    public String getHeader(String key) {
+        return  headers.get(key);
     }
 
     public String putHeader(String key, String value) {

@@ -2,13 +2,11 @@ package ru.vsu.csf.george.pryadchenko.server.dockerLogic;
 
 
 import org.reflections.Reflections;
-import ru.vsu.csf.george.pryadchenko.server.Application;
 import ru.vsu.csf.george.pryadchenko.server.http.request.HttpRequest;
 import ru.vsu.csf.george.pryadchenko.server.http.request.RequestType;
 import ru.vsu.csf.george.pryadchenko.server.http.response.HttpResponse;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -24,19 +22,16 @@ public class Servlet {
         reflections = new Reflections(pack); // TODO переписать
 
 
-        Set<Class<?>> set = reflections.getTypesAnnotatedWith(RequestMapping.class); // TODO переписать
+        Set<Class<?>> set = reflections.getTypesAnnotatedWith(Controller.class); // TODO переписать
 
         for (Class<?> aClass : set) {
-            String path = aClass.getAnnotation(RequestMapping.class).value();
+            String path = aClass.getAnnotation(Controller.class).value();
             beanMap.put(path, new Bean(aClass));
         }
     }
 
 
     public void doGet(HttpRequest request, HttpResponse response) throws IOException {
-        // get Controller by parsing path
-        // get method by GetMapping annotation
-        // invoke method
         String[] path = request.getPath().split("/");
         Bean bean = beanMap.get("/" + path[2]);
         List<Method> methods = bean.getMethodsByAnnotation(GetMapping.class);
@@ -50,16 +45,16 @@ public class Servlet {
                 params.add(map.get(annotation.name()) == null ? "" : map.get(annotation.name())); // TODO обработка аннотаций параметров
             }
 
-            String body = null;
+            byte[] body = null;
             try {
-                body = (String) method.invoke(null, params.toArray());  // FIXME
+                body = method.invoke(null, params.toArray()).toString().getBytes(StandardCharsets.UTF_16);  // FIXME
             } catch (Exception e) {
                 response.setStatus("418 I’m a teapot");
-                body = response.getStatus();
+                body = response.getStatus().getBytes(StandardCharsets.UTF_16);
                 e.printStackTrace();
             }
-            response.putHeader("Content-Type", "text/html; charset=utf-8");
-            response.setBody(body.getBytes(StandardCharsets.UTF_8));
+            response.putHeader("Content-Type", "text/html; charset=UTF-8"); // FIXME
+            response.setBody(body);
             response.send();
 
         }

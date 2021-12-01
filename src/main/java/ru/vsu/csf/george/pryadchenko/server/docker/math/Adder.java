@@ -2,9 +2,9 @@ package ru.vsu.csf.george.pryadchenko.server.docker.math;
 
 import ru.vsu.csf.george.pryadchenko.server.dockerLogic.GetMapping;
 import ru.vsu.csf.george.pryadchenko.server.dockerLogic.Param;
-import ru.vsu.csf.george.pryadchenko.server.dockerLogic.RequestMapping;
+import ru.vsu.csf.george.pryadchenko.server.dockerLogic.Controller;
 
-@RequestMapping("/adder")
+@Controller("/adder")
 public class Adder {
 
     @GetMapping

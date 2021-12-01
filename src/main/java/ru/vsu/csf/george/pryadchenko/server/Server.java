@@ -32,17 +32,22 @@ public class Server extends Thread {
     @Override
     public void run() {
         try {
-            while (!input.ready()) ;
+            while (!input.ready());
             HttpRequest httpRequest = new HttpRequest(input);
             String[] path = httpRequest.getPath().split("/");
             Servlet servlet = Application.getServlet(path[1]); // Is it good?
+            if (servlet == null) return;
             servlet.doResponse(httpRequest, new HttpResponse(outputStream));
-            clientSocket.close();
+
         } catch (Exception e) {
 
             e.printStackTrace();
         } finally {
-
+            try {
+                clientSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
 

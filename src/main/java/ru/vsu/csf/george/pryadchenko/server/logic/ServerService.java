@@ -40,6 +40,7 @@ public class ServerService {
         FileInputStream fileInputStream = new FileInputStream(file);
         byte[] bytes = new byte[fileInputStream.available()];
         fileInputStream.read(bytes, 0, bytes.length);
+        fileInputStream.close();
         return bytes;
     }
 

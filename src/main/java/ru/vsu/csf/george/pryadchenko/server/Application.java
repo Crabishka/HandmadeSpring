@@ -47,7 +47,7 @@ public class Application {
         }
     }
 
-    public static Servlet getServlet(String name){
+    public synchronized static Servlet getServlet(String name){
         return dispatchers.get(name);
     }
 

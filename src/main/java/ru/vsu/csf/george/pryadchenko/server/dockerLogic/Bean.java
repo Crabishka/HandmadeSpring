@@ -7,7 +7,7 @@ import java.util.*;
 public class Bean {
 
     List<Annotation> classAnnotation;
-    Map<Annotation, List<Method>> methods = new HashMap<>();
+    Map<Class<? extends Annotation>, List<Method>> methods = new HashMap<>();
     Map<Method, List<Param>> paramsOfMethods = new HashMap<>();
 
     public Bean(Class<?> parsedClass) {
@@ -22,7 +22,7 @@ public class Bean {
                 } else {
                     List<Method> list = new ArrayList<>();
                     list.add(method);
-                    this.methods.put(annotation, list);
+                    this.methods.put(annotation.annotationType(), list);
                 }
             }
             List<Param> params = new ArrayList<>();
@@ -39,7 +39,8 @@ public class Bean {
 
     }
 
-    public List<Method> getMethodsByAnnotation(Class<GetMapping> annotation) { // FIXME
+
+    public List<Method> getMethodsByAnnotation(Class<? extends Annotation> annotation) {
         return this.methods.get(annotation);
     }
 

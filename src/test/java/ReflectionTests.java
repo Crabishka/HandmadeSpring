@@ -1,6 +1,6 @@
 import ru.vsu.csf.george.pryadchenko.server.dockerLogic.GetMapping;
 import ru.vsu.csf.george.pryadchenko.server.dockerLogic.Param;
-import ru.vsu.csf.george.pryadchenko.server.dockerLogic.RequestMapping;
+import ru.vsu.csf.george.pryadchenko.server.dockerLogic.Controller;
 import ru.vsu.csf.george.pryadchenko.server.dockerLogic.Servlet;
 import ru.vsu.csf.george.pryadchenko.server.logic.GetProperties;
 import junit.framework.TestCase;
@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
 import java.util.*;
 
 public class ReflectionTests extends TestCase {
@@ -20,15 +19,15 @@ public class ReflectionTests extends TestCase {
         String path = "/adder";
 
         Reflections reflections = new Reflections("ru.vsu.csf.george.pryadchenko.Server.Docker.Servlet");
-        Set<Class<?>> set = reflections.getTypesAnnotatedWith(RequestMapping.class);
+        Set<Class<?>> set = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (Class<?> aClass : set) {
             if (Arrays.stream(aClass.getInterfaces()).noneMatch(Servlet.class::equals))
                 continue;  // does class implement Servlet
             Annotation[] annotations = aClass.getAnnotations(); // get all annotations
             for (Annotation annotation : annotations) {
-                if (annotation instanceof RequestMapping) {
-                    if (((RequestMapping) annotation).value().equals(path)) {
+                if (annotation instanceof Controller) {
+                    if (((Controller) annotation).value().equals(path)) {
                         try {
                             Servlet servlet = (Servlet) aClass.newInstance();
 
@@ -47,10 +46,10 @@ public class ReflectionTests extends TestCase {
         Reflections reflections = new Reflections(GetProperties.getProperty("servlet_docker"));
 
 
-        Set<Class<?>> set = reflections.getTypesAnnotatedWith(RequestMapping.class);
+        Set<Class<?>> set = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (Class<?> aClass : set) {
-            String path = aClass.getAnnotation(RequestMapping.class).value();
+            String path = aClass.getAnnotation(Controller.class).value();
             controllers.put(path, aClass);
         }
 
