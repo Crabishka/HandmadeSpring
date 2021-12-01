@@ -1,4 +1,4 @@
-package Client;
+package ru.vsu.csf.george.pryadchenko.client;
 
 public class Client {
 
