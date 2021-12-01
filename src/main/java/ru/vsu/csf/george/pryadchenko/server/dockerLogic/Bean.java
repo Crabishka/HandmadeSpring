@@ -4,14 +4,25 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
 
+/**
+ * Bean is class-decorator for Class<?>
+ * It contains all reflection information about one Class<?>
+ */
 public class Bean {
 
-    List<Annotation> classAnnotation;
+    String beanID = null;
+    List<Class<? extends Annotation>> classAnnotation;
     Map<Class<? extends Annotation>, List<Method>> methods = new HashMap<>();
     Map<Method, List<Param>> paramsOfMethods = new HashMap<>();
 
     public Bean(Class<?> parsedClass) {
-        classAnnotation = Arrays.asList(parsedClass.getAnnotations());
+        Annotation[] classAnnotations = parsedClass.getAnnotations();
+        for (Annotation annotation : classAnnotations) {
+            if (annotation.equals(Controller.class)) {
+                beanID = ((Controller) annotation).value(); // FIXME
+                this.classAnnotation.add(annotation.getClass());
+            }
+        }
 
         Method[] methods = parsedClass.getDeclaredMethods();
         for (Method method : methods) {
@@ -46,6 +57,10 @@ public class Bean {
 
     public List<Param> getParamsByMethod(Method method) {
         return this.paramsOfMethods.get(method);
+    }
+
+    public List<Class<? extends Annotation>> getClassAnnotation() {
+        return classAnnotation;
     }
 
 }

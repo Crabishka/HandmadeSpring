@@ -11,29 +11,24 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+/**
+ * Servlet is used for making HTTP response by getting and parsing HTTP request.
+ * It also contains Factory to
+ */
 public class Servlet {
 
-    Map<String, Bean> beanMap = new HashMap<>();
+    private Factory factory;
     String packagePath;
 
     public Servlet(String pack) {
-        packagePath = pack;
-        Reflections reflections = null;
-        reflections = new Reflections(pack); // TODO переписать
 
-
-        Set<Class<?>> set = reflections.getTypesAnnotatedWith(Controller.class); // TODO переписать
-
-        for (Class<?> aClass : set) {
-            String path = aClass.getAnnotation(Controller.class).value();
-            beanMap.put(path, new Bean(aClass));
-        }
+        this.factory = new Factory(pack);
     }
 
 
     public void doGet(HttpRequest request, HttpResponse response) throws IOException {
         String[] path = request.getPath().split("/");
-        Bean bean = beanMap.get("/" + path[2]);
+        Bean bean = factory.getByAnnotationAndName(Controller.class,"/" + path[2]);
         List<Method> methods = bean.getMethodsByAnnotation(GetMapping.class);
         Map<String, String> map = request.getParams();
 
