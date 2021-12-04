@@ -1,7 +1,8 @@
-package ru.vsu.csf.pryadchenko.spring;
+package ru.vsu.csf.george.pryadchenko.server;
 
-import ru.vsu.csf.pryadchenko.spring.dockerLogic.Servlet;
-import ru.vsu.csf.pryadchenko.spring.logic.GetProperties;
+import ru.vsu.csf.george.pryadchenko.server.dockerLogic.RootResourceHandler;
+import ru.vsu.csf.george.pryadchenko.server.dockerLogic.Servlet;
+import ru.vsu.csf.george.pryadchenko.server.logic.GetProperties;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +13,18 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+/** TODO
+ * Annotation for Service/Repository - done
+ * Factory in Servlet - done
+ * ContentType annotation - done
+ * Post HTTP - in progress
+ * Json, html, css, js content types - in progress
+ * Injection in Service
+ * ResourceHandler - postponed
+ * Regex for path - postponed
+ * Fix Annotation/Class<? extends Annotation> problem - done
+ * Repository interface
+ */
 
 public class Application {
 
@@ -30,7 +43,8 @@ public class Application {
     public static void main(String[] args) throws IOException {
         createServlet();
         drawTree();
-        try (ServerSocket s = new ServerSocket(PORT)) {
+        ServerSocket s = new ServerSocket(PORT);
+        try {
             while (true) {
                 Socket ClientSocket = s.accept();
                 try {
@@ -41,14 +55,17 @@ public class Application {
                     ClientSocket.close();
                 }
             }
+        } finally {
+            s.close();
         }
     }
 
-    public synchronized static Servlet getServlet(String name) {
+    public synchronized static Servlet getServlet(String name){
         return dispatchers.get(name);
     }
 
     public static List<File> getAllPackage() throws IOException {
+        // TODO if there are not files in docker package so there is only one Servlet with empty path ""
         String pathToPackage = GetProperties.getProperty("servlet_docker").replace('.', '/');
         File file = new File(pathToPackage);
         return Arrays.asList(file.listFiles());
@@ -57,11 +74,12 @@ public class Application {
     public static void createServlet() throws IOException {
         for (File file : getAllPackage()) {
             dispatchers.put(file.getName(), new Servlet(file.getPath().replace('\\', '.')
-                    .replace("src.main.java.", ""))); // FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+                    .replace("my-first-web-server.src.main.java.", ""))); // FIXME FIXME FIXME FIXME FIXME FIXME FIXME
         }
+        dispatchers.put("", new RootResourceHandler("ru.vsu.csf.george.pryadchenko.server.docker"));
     }
 
-    public static void drawTree() {
+    public static void drawTree(){
         System.out.println("      ccee88oo\n" +
                 "  C8O8O8Q8PoOb o8oo\n" +
                 " dOB69QO8PdUOpugoO9bD\n" +

@@ -11,14 +11,14 @@ import java.util.*;
 public class Bean {
 
     String beanID = null;
-    List<Annotation> classAnnotation = new ArrayList<>();
-    Map<Method, List<Class<? extends Annotation>>> methods = new HashMap<>();
+    List<AnnotationBinder> classAnnotation = new ArrayList<>();
+    Map<Method, Map<String, AnnotationBinder>> methods = new HashMap<>(); // TODO remake using Map<Method,Map<String, Annotation>>
     Map<Method, List<Annotation>> paramsOfMethods = new HashMap<>();
 
     public Bean(Class<?> parsedClass) {
         Annotation[] classAnnotations = parsedClass.getAnnotations();
         for (Annotation annotation : classAnnotations) {
-            this.classAnnotation.add(annotation);
+            this.classAnnotation.add(new AnnotationBinder(annotation));
             if (annotation.annotationType().equals(Controller.class)) {
                 beanID = ((Controller) annotation).value();
             }
@@ -29,10 +29,13 @@ public class Bean {
 
         for (Method method : methods) {
             Annotation[] methodAnnotations = method.getAnnotations();
-            this.methods.put(method, new ArrayList<>());
-            List<Class<? extends Annotation>> annotations = this.methods.get(method);
-            for (Annotation annotation : methodAnnotations){
-                annotations.add(annotation.getClass());
+            this.methods.put(method, new HashMap<>());
+            Map<String, AnnotationBinder> annotations = this.methods.get(method);
+            for (Annotation annotation : methodAnnotations) {
+                String name = annotation.toString();
+                name = name.substring(0, name.indexOf('('));
+                name = name.substring(name.lastIndexOf('.') + 1);
+                annotations.put(name, new AnnotationBinder(annotation));
             }
             List<Annotation> params = new ArrayList<>();
 
@@ -47,13 +50,23 @@ public class Bean {
     }
 
 
-    public List<Method> getMethodsByAnnotation(Class<? extends Annotation> annotation) {
-        List<Method> list = new ArrayList<>();
-        for (Map.Entry<Method, List<Class<? extends Annotation>>> entry : this.methods.entrySet()) {
-            if (entry.getValue().contains(annotation)) list.add(entry.getKey());
+    public Method getMethodsByAnnotationAndValue(AnnotationBinder annotation, String value) {
+        for (Map.Entry<Method, Map<String, AnnotationBinder>> entry : this.methods.entrySet()) {
+            for (Map.Entry<String,AnnotationBinder> annotationEntry : entry.getValue().entrySet()) {
+                if (annotationEntry.getValue().equals(annotation) && annotationEntry.getValue().value.equals(value)) {
+                    return entry.getKey();
+                }
+            }
         }
+        return null;
+    }
 
-        return list;
+    public Map<String, AnnotationBinder> getAnnotationsByMethod(Method method) {
+        return methods.get(method);
+    }
+
+    public AnnotationBinder getAnnotationByMethodAndName(String name, Method method) {
+        return methods.get(method).get(name);
     }
 
     public List<Annotation> getParamsByMethod(Method method) {
@@ -61,7 +74,7 @@ public class Bean {
     }
 
 
-    public List<Annotation> getClassAnnotation() {
+    public List<AnnotationBinder> getClassAnnotation() {
         return classAnnotation;
     }
 

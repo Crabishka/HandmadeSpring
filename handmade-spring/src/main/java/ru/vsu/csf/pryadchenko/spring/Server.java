@@ -36,7 +36,9 @@ public class Server extends Thread {
             HttpRequest httpRequest = new HttpRequest(input);
             String[] path = httpRequest.getPath().split("/");
             Servlet servlet = Application.getServlet(path[1]); // Is it good?
-            if (servlet == null) return;
+            if (servlet == null) {
+                servlet = Application.getServlet("");
+            }
             servlet.doResponse(httpRequest, new HttpResponse(outputStream));
 
         } catch (Exception e) {
