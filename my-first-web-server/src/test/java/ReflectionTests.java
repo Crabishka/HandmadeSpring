@@ -1,10 +1,8 @@
-import ru.vsu.csf.george.pryadchenko.server.dockerLogic.GetMapping;
-import ru.vsu.csf.george.pryadchenko.server.dockerLogic.Param;
-import ru.vsu.csf.george.pryadchenko.server.dockerLogic.Controller;
-import ru.vsu.csf.george.pryadchenko.server.dockerLogic.Servlet;
+import ru.vsu.csf.george.pryadchenko.server.dockerLogic.*;
 import ru.vsu.csf.george.pryadchenko.server.logic.GetProperties;
 import junit.framework.TestCase;
 import org.reflections.Reflections;
+import sun.reflect.annotation.AnnotationParser;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,29 +13,8 @@ import java.util.*;
 public class ReflectionTests extends TestCase {
 
     public void testReflection() {
-
-        String path = "/adder";
-
-        Reflections reflections = new Reflections("ru.vsu.csf.george.pryadchenko.Server.Docker.Servlet");
-        Set<Class<?>> set = reflections.getTypesAnnotatedWith(Controller.class);
-
-        for (Class<?> aClass : set) {
-            if (Arrays.stream(aClass.getInterfaces()).noneMatch(Servlet.class::equals))
-                continue;  // does class implement Servlet
-            Annotation[] annotations = aClass.getAnnotations(); // get all annotations
-            for (Annotation annotation : annotations) {
-                if (annotation instanceof Controller) {
-                    if (((Controller) annotation).value().equals(path)) {
-                        try {
-                            Servlet servlet = (Servlet) aClass.newInstance();
-
-                        } catch (InstantiationException | IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        }
+        Annotation getMapping = AnnotationParser.annotationForMap(GetMapping.class, Collections.singletonMap("value", "123"));
+        AnnotationBinder annotationBinder = new AnnotationBinder(getMapping);
     }
 
     public void testAnnotation() throws IOException {

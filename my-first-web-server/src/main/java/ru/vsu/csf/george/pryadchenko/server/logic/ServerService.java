@@ -1,6 +1,13 @@
 package ru.vsu.csf.george.pryadchenko.server.logic;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Base64;
 
 /**
  * this class hasn't any state
@@ -23,7 +30,7 @@ public class ServerService {
         return extension;
     }
 
-    private static String readTextFromFile(File file) throws IOException {
+    public static String readTextFromFile(File file) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         FileReader fileReader = new FileReader(file);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -36,13 +43,11 @@ public class ServerService {
         return stringBuilder.toString();
     }
 
-    public static byte[] readAllBytes(File file) throws IOException {
+    public static String readAllBytes(File file) throws IOException {
         FileInputStream fileInputStream = new FileInputStream(file);
         byte[] bytes = new byte[fileInputStream.available()];
         fileInputStream.read(bytes, 0, bytes.length);
-        fileInputStream.close();
-        return bytes;
+        return  Base64.getEncoder().encodeToString(bytes);
     }
-
 
 }

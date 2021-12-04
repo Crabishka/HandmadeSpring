@@ -59,7 +59,7 @@ public class HttpResponse {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(version).append(" ").append(status).append("\n");
         for (Map.Entry<String, String> header : headers.entrySet()) {
-            stringBuilder.append(header.getKey()).append(":").append(header.getValue()).append("\n");
+            stringBuilder.append(header.getKey()).append(": ").append(header.getValue()).append("\n");
         }
         stringBuilder.append("\n");
         byte[] bytes = stringBuilder.toString().getBytes(StandardCharsets.UTF_8);
