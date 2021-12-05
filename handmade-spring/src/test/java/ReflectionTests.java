@@ -1,5 +1,8 @@
-import ru.vsu.csf.george.pryadchenko.server.dockerLogic.*;
-import ru.vsu.csf.george.pryadchenko.server.logic.GetProperties;
+import ru.vsu.csf.server.dockerLogic.*;
+import ru.vsu.csf.server.dockerLogic.annotation.Controller;
+import ru.vsu.csf.server.dockerLogic.annotation.GetMapping;
+import ru.vsu.csf.server.dockerLogic.annotation.Param;
+import ru.vsu.csf.server.logic.GetProperties;
 import junit.framework.TestCase;
 import org.reflections.Reflections;
 import sun.reflect.annotation.AnnotationParser;
