@@ -1,11 +1,10 @@
-import ru.vsu.csf.server.dockerLogic.*;
-import ru.vsu.csf.server.dockerLogic.annotation.Controller;
-import ru.vsu.csf.server.dockerLogic.annotation.GetMapping;
-import ru.vsu.csf.server.dockerLogic.annotation.Param;
-import ru.vsu.csf.server.logic.GetProperties;
+import ru.vsu.csf.pryadchenko.server.dockerLogic.AnnotationBinder;
+import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Controller;
+import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.GetMapping;
+import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Param;
+import ru.vsu.csf.pryadchenko.server.logic.GetProperties;
 import junit.framework.TestCase;
 import org.reflections.Reflections;
-import sun.reflect.annotation.AnnotationParser;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,11 +13,6 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 public class ReflectionTests extends TestCase {
-
-    public void testReflection() {
-        Annotation getMapping = AnnotationParser.annotationForMap(GetMapping.class, Collections.singletonMap("value", "123"));
-        AnnotationBinder annotationBinder = new AnnotationBinder(getMapping);
-    }
 
     public void testAnnotation() throws IOException {
         Map<String, Class<?>> controllers = new HashMap<>();
