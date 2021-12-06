@@ -108,8 +108,7 @@ public class Factory {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-            }
-            if (file.endsWith(CLASS_FILE_SUFFIX)) {
+            } else if (file.endsWith(CLASS_FILE_SUFFIX)) {
                 String classname = file.replace(DIR_SEPARATOR, PKG_SEPARATOR)
                         .substring(0, file.length() - CLASS_FILE_SUFFIX.length());
                 try {

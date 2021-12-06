@@ -79,7 +79,7 @@ function connect() {
             navigator.sendBeacon(`api/logic/${id}`);
         });
         updateGameState();
-    }).fail(() => location.reload());
+    });
 }
 
 function initCanvas() {
