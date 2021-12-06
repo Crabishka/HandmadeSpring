@@ -8,9 +8,10 @@ import ru.vsu.csf.pryadchenko.server.http.response.HttpResponse;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Server implements Runnable {
-
 
 
     Socket clientSocket;
@@ -23,30 +24,31 @@ public class Server implements Runnable {
     @Override
     public void run() {
         try {
-            BufferedReader input = null;
-            OutputStream outputStream = null;
-            try {
-                input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
-                outputStream = clientSocket.getOutputStream();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
-            StringBuilder stringBuilder = new StringBuilder();
-            while (!input.ready()) {
-            }
-            while (input.ready()){
-                String str = input.readLine();
-                System.out.println(str);
-                stringBuilder.append(str);
-                if (str.equals("Accept-Language: ru,en;q=0.9,pl;q=0.8")) break;
-            }
-            System.out.println("вышел");
+            try (InputStream input = clientSocket.getInputStream();
+                 OutputStream outputStream = clientSocket.getOutputStream()) {
+                List<Integer> queue = new LinkedList<>();
+                StringBuilder stringBuilder = new StringBuilder();
+                for (int ch; (ch = input.read()) != -1; ) {
 
-            HttpRequest httpRequest = new HttpRequest(stringBuilder.toString());
-            System.out.println("Новое соединение установлено" + " " + httpRequest.getPath() + " " + httpRequest.getParams().toString());
-            String[] path = httpRequest.getPath().split("/");
-            Servlet servlet = Application.getServlet(path[1]);
-            servlet.doResponse(httpRequest, new HttpResponse(outputStream));
+                    if (queue.size() >= 4) {
+                        if (queue.get(0) == 13 && queue.get(1) == 10 && queue.get(2) == 13 && queue.get(3) == 10) break;
+                        queue.remove(0);
+
+                    }
+                    queue.add(ch);
+                    stringBuilder.append((char) ch);
+                }
+
+                System.out.println(stringBuilder);
+                System.out.println("вышел");
+
+                HttpRequest httpRequest = new HttpRequest(stringBuilder.toString());
+                System.out.println("Новое соединение установлено" + " " + httpRequest.getPath() + " " + httpRequest.getParams().toString());
+                String[] path = httpRequest.getPath().split("/");
+                Servlet servlet = Application.getServlet(path[1]);
+                servlet.doResponse(httpRequest, new HttpResponse(outputStream));
+            }
+
 
         } catch (Exception e) {
             e.printStackTrace();

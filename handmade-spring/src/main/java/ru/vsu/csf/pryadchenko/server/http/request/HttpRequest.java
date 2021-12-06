@@ -19,7 +19,7 @@ public class HttpRequest {
     private byte[] body;
 
 
-    public HttpRequest(String s){
+    public HttpRequest(String s) {
         try {
             parseInput(s);
         } catch (IOException e) {
@@ -83,11 +83,12 @@ public class HttpRequest {
         }
 
         int i = 1;
-        while (lines.length > i && !lines[i].equals("")) {
+        while (lines.length > i && !lines[i].equals("") && !lines[i].equals("\r")) {
             String[] header = lines[i].split(":");
             headers.put(header[0], header[1]);
             i++;
         }
+
 
         StringBuilder bodyBuilder = new StringBuilder();
         while (lines.length > i) {
