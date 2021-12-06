@@ -35,24 +35,33 @@ public class Servlet {
 //    @GetMapping
 //    public void a(){}
 
+    private Bean extracted(HttpRequest request) {
+        String[] path = request.getPath().split("/");
+        if (path.length == 3) {
+            beanPath = "";
+            methodPath = path[2];
+        } else {
+            try {
+                beanPath = path[2];
+            } catch (Exception e) {
+                beanPath = "";
+            }
+            try {
+                methodPath = path[3];
+            } catch (Exception e) {
+                methodPath = "";
+            }
+        }
+        return factory.getByAnnotationAndName(Controller.class, beanPath);
+    }
+
     public void doGet(HttpRequest request, HttpResponse response) throws IOException {
         // Get needful Bean and Method
-        String[] path = request.getPath().split("/");
-        try {
-            beanPath = path[2];
-        } catch (Exception e) {
-            beanPath = "";
-        }
-        Bean bean = factory.getByAnnotationAndName(Controller.class, beanPath);
-        try {
-            methodPath = path[3];
-        } catch (Exception e) {
-            methodPath = "";
-        }
-
+        Bean bean = extracted(request);
         Method method = bean.getMethodsByAnnotationAndValue(new AnnotationBinder(GetMapping.class), methodPath);
         //Annotation getMapping = AnnotationParser.annotationForMap(GetMapping.class, Collections.singletonMap("", ""));
         // Get params
+        ObjectMapper mapper = new ObjectMapper();
         Map<String, String> map = request.getParams();
         List<String> params = new ArrayList<>();
         for (Annotation annotation : bean.getParamsByMethod(method)) {
@@ -72,8 +81,15 @@ public class Servlet {
                     }
                     case ("text/html; charset=UTF-8"):
                     case ("text/css"):
-                    case ("application/javascript"): {
+                    case ("application/javascript"):
+                    {
                         body = method.invoke(null, params.toArray()).toString().getBytes(StandardCharsets.UTF_8);
+                        break;
+                    }
+                    case ("application/json"):{
+                        Object result = method.invoke(null, params.toArray());
+                        String str = mapper.writeValueAsString(result);
+                        body = str.getBytes(StandardCharsets.UTF_8);
                         break;
                     }
                 }
@@ -89,18 +105,7 @@ public class Servlet {
     }
 
     public void doPost(HttpRequest request, HttpResponse response) throws IOException {
-        String[] path = request.getPath().split("/");
-        try {
-            beanPath = path[2];
-        } catch (Exception e) {
-            beanPath = "";
-        }
-        Bean bean = factory.getByAnnotationAndName(Controller.class, beanPath);
-        try {
-            methodPath = path[3];
-        } catch (Exception e) {
-            methodPath = "";
-        }
+        Bean bean = extracted(request);
         ObjectMapper mapper = new ObjectMapper();
         Method method = bean.getMethodsByAnnotationAndValue(new AnnotationBinder(PostMapping.class), methodPath);
         Map<String, String> map = request.getParams();
@@ -119,12 +124,13 @@ public class Servlet {
         response.putHeader("Content-Type", "application/json");
         try {
             Object result = method.invoke(null, params.toArray());
-//            Class<?> returnType = method.getReturnType();
-            body = result.toString().getBytes(StandardCharsets.UTF_8);
+            String str = mapper.writeValueAsString(result);
+            body = str.getBytes(StandardCharsets.UTF_8);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
         // Set response
+        System.out.println(new String(body));
         response.setBody(body);
         response.send();
 

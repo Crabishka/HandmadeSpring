@@ -22,11 +22,11 @@ import java.util.jar.JarFile;
  * Annotation for Service/Repository - done
  * Factory in Servlet - done
  * ContentType annotation - done
- * Post HTTP - in progress
+ * Post HTTP - done
  * html, css, js content types - done
- * Json content Type
+ * Json content Type - done
  * Injection in Service
- * ResourceHandler - me 50/50
+ * ResourceHandler - postponed
  * Regex for path - postponed
  * Fix Annotation/Class<? extends Annotation> problem - done
  * Repository interface

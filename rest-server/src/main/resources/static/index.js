@@ -72,11 +72,11 @@ function normalizeStr(str) {
 
 function connect() {
     $.ajax({
-        url: 'api/logic', type: 'POST', dataType: 'text'
+        url: 'api/connect', type: 'POST', dataType: 'text'
     }).done((data) => {
         id = data;
         $(window).on('unload', () => {
-            navigator.sendBeacon(`api/logic/${id}`);
+            navigator.sendBeacon(`api/terminate?key=${id}`);
         });
         updateGameState();
     });
@@ -110,8 +110,8 @@ function canvasClick(e) {
 }
 
 function updateGameState() {
-    $.get(`api/logic/${id}`).done((data) => {
-        if (Object.keys(data).length !== 0) {
+    $.get(`api/getState?key=${id}`).done((data) => {
+        if (data != null) {
             gameState = data;
             if (canvas == null) {
                 initCanvas();
@@ -126,7 +126,7 @@ function updateGameState() {
 function sendClick(i, j) {
     let half = N / 2 | 0;
     $.ajax({
-        url: `api/select/${id}`,
+        url: `api/select?key=${id}`,
         type: 'PUT',
         contentType: 'application/json',
         data: JSON.stringify({
@@ -146,7 +146,7 @@ function sendClick(i, j) {
 
 function promotePawn(piece) {
     $.ajax({
-        url: `api/promote/${id}`,
+        url: `api/promote?key={id}`,
         type: 'PUT',
         contentType: 'application/json',
         data: JSON.stringify({

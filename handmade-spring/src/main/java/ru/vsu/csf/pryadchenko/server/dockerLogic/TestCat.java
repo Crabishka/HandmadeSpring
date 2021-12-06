@@ -10,4 +10,13 @@ public class TestCat {
 
     public TestCat() {
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "name:'" + name + '\'' +
+                ", age:" + age +
+                ", weight:" + weight +
+                '}';
+    }
 }

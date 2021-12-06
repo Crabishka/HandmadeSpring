@@ -8,7 +8,7 @@ import ru.vsu.csf.pryadchenko.server.logic.ServerService;
 import java.io.File;
 import java.io.IOException;
 
-@Controller("web")
+@Controller
 public class WebController {
 
     @GetMapping("html")
@@ -48,11 +48,7 @@ public class WebController {
 
     @PostMapping()
     @ContentType("application/json")
-    public static TestCat doPost(@Param(requestBody = true, type = TestCat.class) TestCat body, @Param(name = "a") String a) {
-        TestCat newCat = new TestCat();
-        newCat.name = body.name + body.name;
-        newCat.age = body.age + 5;
-        newCat.weight = body.weight * 2;
-        return newCat;
+    public static boolean doPost(@Param(requestBody = true, type = TestCat.class) TestCat body, @Param(name = "a") String a) {
+        return true;
     }
 }

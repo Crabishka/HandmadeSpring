@@ -29,6 +29,8 @@ public class AnnotationBinder {
                 this.value = ((Repository) annotation).value();
             } else if (annotation.annotationType().equals(Service.class)) {
                 this.value = ((Service) annotation).value();
+            } else if (annotation.annotationType().equals(PostMapping.class)) {
+                this.value = ((PostMapping) annotation).value();
             }
         } catch (Exception e) {
             e.printStackTrace();
