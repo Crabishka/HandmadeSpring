@@ -7,7 +7,6 @@
 
     <modules>
         <module>handmade-spring</module>
-        <module>chess-logic</module>
         <module>rest-server</module>
     </modules>
 
