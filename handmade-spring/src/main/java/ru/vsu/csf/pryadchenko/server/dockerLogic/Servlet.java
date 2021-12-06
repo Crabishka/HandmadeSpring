@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.jar.JarFile;
 
 /**
  * Servlet is used for making HTTP response by getting and parsing HTTP request.
@@ -27,8 +28,8 @@ public class Servlet {
     private String beanPath;
     private String methodPath;
 
-    public Servlet(String pack) {
-        this.factory = new Factory(pack);
+    public Servlet(JarFile jar) {
+        this.factory = new Factory(jar);
     }
 
 //    @GetMapping

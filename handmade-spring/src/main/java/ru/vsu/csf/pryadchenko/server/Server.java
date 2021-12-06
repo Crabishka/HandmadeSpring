@@ -35,12 +35,7 @@ public class Server extends Thread {
             HttpRequest httpRequest = new HttpRequest(input);
             System.out.println("Новое соединение установлено" + " " + httpRequest.getPath() + " " + httpRequest.getParams().toString());
             String[] path = httpRequest.getPath().split("/");
-            Servlet servlet = Application.getServlet(path[1]); // Is it good?
-            if (servlet == null & httpRequest.getParams().size() == 0) {
-                servlet = Application.getServlet("ResourceHandler");
-            } else if (servlet == null) {
-                return;
-            }
+            Servlet servlet = Application.getServlet(path[1]);
             servlet.doResponse(httpRequest, new HttpResponse(outputStream));
 
         } catch (Exception e) {

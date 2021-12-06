@@ -1,19 +1,24 @@
 package ru.vsu.csf.pryadchenko.server;
 
-import ru.vsu.csf.pryadchenko.server.dockerLogic.RootResourceHandler;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.Servlet;
 import ru.vsu.csf.pryadchenko.server.logic.GetProperties;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.jar.JarFile;
 
-/** TODO
+/**
+ * TODO
  * Annotation for Service/Repository - done
  * Factory in Servlet - done
  * ContentType annotation - done
@@ -29,6 +34,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public class Application {
 
+    public static final String RESOURCE_PATH = "handmade-spring/src/main/resources";
     private static int PORT;
     static int i = 0;
     static ConcurrentMap<String, Servlet> dispatchers = new ConcurrentHashMap<>();
@@ -44,8 +50,7 @@ public class Application {
     public static void main(String[] args) throws IOException {
         createServlet();
         drawTree();
-        ServerSocket s = new ServerSocket(PORT);
-        try {
+        try (ServerSocket s = new ServerSocket(PORT)) {
             while (true) {
                 Socket ClientSocket = s.accept();
                 try {
@@ -55,31 +60,29 @@ public class Application {
                     ClientSocket.close();
                 }
             }
-        } finally {
-            s.close();
         }
     }
 
-    public synchronized static  Servlet getServlet(String name){
+    public synchronized static Servlet getServlet(String name) {
         return dispatchers.get(name);
     }
 
-    public static List<File> getAllPackage() throws IOException {
-        // TODO if there are not files in docker package so there is only one Servlet with empty path ""
-        String pathToPackage = GetProperties.getProperty("servlet_docker").replace('.', '/');
-        File file = new File(pathToPackage);
+    public static List<File> getAllFiles() {
+        File file = new File(RESOURCE_PATH + "/docker");
         return Arrays.asList(file.listFiles());
     }
 
     public static void createServlet() throws IOException {
-        for (File file : getAllPackage()) {
-            dispatchers.put(file.getName(), new Servlet(file.getPath().replace('\\', '.')
-                    .replace("handmade-spring.src.main.java.", ""))); // FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+        for (File file : getAllFiles()) {
+            if (file.getName().endsWith(".jar")) {
+                JarFile jarFile = new JarFile(file);
+                dispatchers.put(jarFile.getName().substring((RESOURCE_PATH + "/docker").length() + 1,
+                        jarFile.getName().length() - 4), new Servlet(jarFile));
+            }
         }
-        dispatchers.put("ResourceHandler", new RootResourceHandler(""));
     }
 
-    public static void drawTree(){
+    public static void drawTree() {
         System.out.println("      ccee88oo\n" +
                 "  C8O8O8Q8PoOb o8oo\n" +
                 " dOB69QO8PdUOpugoO9bD\n" +

@@ -1,13 +1,23 @@
 package ru.vsu.csf.pryadchenko.server.dockerLogic;
 
+import ru.vsu.csf.pryadchenko.server.Application;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Controller;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Repository;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Service;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
+import java.util.zip.ZipEntry;
 
 /**
  * Factory is repository for Classes in any one package.
@@ -19,21 +29,22 @@ public class Factory {
      * if it's Controller name is value of annotation
      * else name is Class Name
      */
-    Map<AnnotationBinder, Map<String, Bean>> storage = new HashMap<>();
-    private final List<AnnotationBinder> AVAILABLE_CLASS_ANNOTATION = new ArrayList<>();
+    private final static List<AnnotationBinder> AVAILABLE_CLASS_ANNOTATION = new ArrayList<>();
 
-
-    public Factory(String packURL) {
-
+    static {
         AVAILABLE_CLASS_ANNOTATION.add(new AnnotationBinder(Controller.class));
         AVAILABLE_CLASS_ANNOTATION.add(new AnnotationBinder(Service.class));
         AVAILABLE_CLASS_ANNOTATION.add(new AnnotationBinder(Repository.class));
+    }
 
+    private final Map<AnnotationBinder, Map<String, Bean>> storage = new HashMap<>();
+
+    public Factory(JarFile jar) {
         for (AnnotationBinder annotation : AVAILABLE_CLASS_ANNOTATION) {
             storage.put(annotation, new HashMap<>());
         }
 
-        List<Class<?>> classes = find(packURL);
+        Collection<Class<?>> classes = getAllClasses(jar);
 
         for (Class<?> clazz : classes) {
             Bean bean = new Bean(clazz);
@@ -66,41 +77,59 @@ public class Factory {
     private static final String CLASS_FILE_SUFFIX = ".class";
 
     /**
-     * Возвращает список классов в пакете
-     *
-     * @return
+     * Возвращает классы из jar
      */
-    public static List find(String scannedPackage) {
-        String scannedPath = scannedPackage.replace(PKG_SEPARATOR, DIR_SEPARATOR);
-        URL scannedUrl = Thread.currentThread().getContextClassLoader().getResource(scannedPath);
-        if (scannedUrl == null) {
-            return Collections.EMPTY_LIST;
+    public static Collection<Class<?>> getAllClasses(JarFile jar) {
+        Collection<Class<?>> classes = new ArrayList<>();
+        URLClassLoader loader;
+        try {
+            loader = new URLClassLoader(new URL[]{new URL("jar:file:" + jar.getName() + "!/")});
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
         }
-        File scannedDir = new File(scannedUrl.getFile());
-        List<Class<?>> classes = new ArrayList<>();
-        for (File file : scannedDir.listFiles()) {
-            classes.addAll(find(file, scannedPackage));
+        File destDir = new File(Application.RESOURCE_PATH);
+        byte[] buffer = new byte[1024];
+        for (Enumeration<JarEntry> entries = jar.entries(); entries.hasMoreElements(); ) {
+            JarEntry entry = entries.nextElement();
+            String file = entry.getName();
+            if (file.startsWith("static/")) {
+                try {
+                    File newFile = newFile(destDir, entry);
+                    if (!entry.isDirectory()) {
+                        FileOutputStream fos = new FileOutputStream(newFile);
+                        InputStream is = jar.getInputStream(entry);
+                        int len;
+                        while ((len = is.read(buffer)) > 0) {
+                            fos.write(buffer, 0, len);
+                        }
+                        is.close();
+                        fos.close();
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (file.endsWith(CLASS_FILE_SUFFIX)) {
+                String classname = file.replace(DIR_SEPARATOR, PKG_SEPARATOR)
+                        .substring(0, file.length() - CLASS_FILE_SUFFIX.length());
+                try {
+                    classes.add(loader.loadClass(classname));
+                } catch (ClassNotFoundException e) {
+                    throw new IllegalArgumentException("Failed to instantiate " + classname + " from " + file, e);
+                }
+            }
         }
+
         return classes;
     }
 
-    private static List<Class<?>> find(File file, String scannedPackage) {
-        List<Class<?>> classes = new ArrayList<>();
-        String resource = scannedPackage + PKG_SEPARATOR + file.getName();
-        if (file.isDirectory()) {
-            for (File child : file.listFiles()) {
-                classes.addAll(find(child, resource));
-            }
-        } else if (resource.endsWith(CLASS_FILE_SUFFIX)) {
-            int endIndex = resource.length() - CLASS_FILE_SUFFIX.length();
-            String className = resource.substring(0, endIndex);
-            try {
-                classes.add(Class.forName(className));
-            } catch (ClassNotFoundException ignore) {
-            }
+    public static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
+        File destFile = new File(destinationDir, zipEntry.getName());
+        if (zipEntry.isDirectory()) {
+            destFile.mkdirs();
+        } else {
+            destFile.createNewFile();
         }
-        return classes;
+        return destFile;
     }
-
-
 }
