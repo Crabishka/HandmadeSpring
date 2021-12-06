@@ -1,6 +1,5 @@
 package ru.vsu.csf.skofenko.logic.model;
 
-import ru.vsu.cs.skofenko.logic.chesspieces.*;
 import ru.vsu.csf.skofenko.logic.chesspieces.*;
 import ru.vsu.csf.skofenko.logic.geometry.Coordinate;
 

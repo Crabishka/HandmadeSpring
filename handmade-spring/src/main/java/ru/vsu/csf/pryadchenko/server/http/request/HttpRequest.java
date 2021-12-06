@@ -2,6 +2,7 @@ package ru.vsu.csf.pryadchenko.server.http.request;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,8 @@ public class HttpRequest {
     private final Map<String, String> headers = new HashMap<>();
 
 
+    private byte[] body;
+
 
     public HttpRequest(BufferedReader in) {
         this.in = in;
@@ -23,6 +26,10 @@ public class HttpRequest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public byte[] getBody() {
+        return body;
     }
 
     public RequestType getRequestType() {
@@ -50,13 +57,6 @@ public class HttpRequest {
     }
 
     private void parseInput(BufferedReader in) throws IOException {
-
-        /*
-        Path - check
-        RequestType - check
-        params - check
-        headers - check
-         */
 
         StringBuilder stringBuilder = new StringBuilder();
         while (in.ready()) {
@@ -94,6 +94,14 @@ public class HttpRequest {
             headers.put(header[0], header[1]);
             i++;
         }
+
+        StringBuilder bodyBuilder = new StringBuilder();
+        while (lines.length > i) {
+            bodyBuilder.append(lines[i]).append("\n");
+            i++;
+        }
+
+        this.body = bodyBuilder.toString().getBytes(StandardCharsets.UTF_8);
 
 
     }

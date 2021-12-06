@@ -74,8 +74,9 @@ public class Application {
     public static void createServlet() throws IOException {
         for (File file : getAllPackage()) {
             dispatchers.put(file.getName(), new Servlet(file.getPath().replace('\\', '.')
-                    .replace("my-first-web-server.src.main.java.", ""))); // FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+                    .replace("handmade-spring.src.main.java.", ""))); // FIXME FIXME FIXME FIXME FIXME FIXME FIXME
         }
+        dispatchers.put("ResourceHandler", new RootResourceHandler(""));
     }
 
     public static void drawTree(){

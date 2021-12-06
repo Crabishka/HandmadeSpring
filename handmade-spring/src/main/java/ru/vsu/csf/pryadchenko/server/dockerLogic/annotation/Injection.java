@@ -5,13 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
-public @interface Param {
-    Class<?> type() default String.class;
-    String value() default "";
-    String name() default "";
-    boolean requestBody() default false;
-
-
+public @interface Injection {
 }

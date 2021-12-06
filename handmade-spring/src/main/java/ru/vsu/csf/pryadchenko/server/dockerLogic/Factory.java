@@ -33,17 +33,6 @@ public class Factory {
             storage.put(annotation, new HashMap<>());
         }
 
-//        File mainFile = new File(packURL);
-//        List<Class<?>> classes = new ArrayList<>();
-//        if (mainFile.listFiles() == null) return;
-//        for (File file : mainFile.listFiles()) {
-//            try {
-//                classes.add(Class.forName(file.getName()));
-//            } catch (ClassNotFoundException e) {
-//                e.printStackTrace();
-//            }
-//        }
-
         List<Class<?>> classes = find(packURL);
 
         for (Class<?> clazz : classes) {

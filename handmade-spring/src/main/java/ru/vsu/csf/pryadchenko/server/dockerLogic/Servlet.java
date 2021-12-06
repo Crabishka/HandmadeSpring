@@ -1,15 +1,18 @@
 package ru.vsu.csf.pryadchenko.server.dockerLogic;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Controller;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.GetMapping;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Param;
+import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.PostMapping;
 import ru.vsu.csf.pryadchenko.server.http.request.HttpRequest;
 import ru.vsu.csf.pryadchenko.server.http.request.RequestType;
 import ru.vsu.csf.pryadchenko.server.http.response.HttpResponse;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -84,7 +87,45 @@ public class Servlet {
         response.send();
     }
 
-    public void doPost(HttpRequest request, HttpResponse response) {
+    public void doPost(HttpRequest request, HttpResponse response) throws IOException {
+        String[] path = request.getPath().split("/");
+        try {
+            beanPath = path[2];
+        } catch (Exception e) {
+            beanPath = "";
+        }
+        Bean bean = factory.getByAnnotationAndName(Controller.class, beanPath);
+        try {
+            methodPath = path[3];
+        } catch (Exception e) {
+            methodPath = "";
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        Method method = bean.getMethodsByAnnotationAndValue(new AnnotationBinder(PostMapping.class), methodPath);
+        Map<String, String> map = request.getParams();
+        List<Object> params = new ArrayList<>();
+        for (Annotation annotation : bean.getParamsByMethod(method)) {
+            if (((Param) annotation).requestBody()) {
+
+                Object object = mapper.readValue(request.getBody(), ((Param) annotation).type());
+                params.add(object);
+            } else {
+                params.add(map.get(((Param) annotation).name()) == null ? "" : map.get(((Param) annotation).name()));
+            }
+        }
+        // Prepare Body
+        byte[] body = null;
+        response.putHeader("Content-Type", "application/json");
+        try {
+            Object result = method.invoke(null, params.toArray());
+//            Class<?> returnType = method.getReturnType();
+            body = result.toString().getBytes(StandardCharsets.UTF_8);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        // Set response
+        response.setBody(body);
+        response.send();
 
     }
 

@@ -1,10 +1,9 @@
-import ru.vsu.csf.pryadchenko.server.dockerLogic.AnnotationBinder;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Controller;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.GetMapping;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Param;
 import ru.vsu.csf.pryadchenko.server.logic.GetProperties;
 import junit.framework.TestCase;
-import org.reflections.Reflections;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -17,15 +16,6 @@ public class ReflectionTests extends TestCase {
     public void testAnnotation() throws IOException {
         Map<String, Class<?>> controllers = new HashMap<>();
 
-        Reflections reflections = new Reflections(GetProperties.getProperty("servlet_docker"));
-
-
-        Set<Class<?>> set = reflections.getTypesAnnotatedWith(Controller.class);
-
-        for (Class<?> aClass : set) {
-            String path = aClass.getAnnotation(Controller.class).value();
-            controllers.put(path, aClass);
-        }
 
         Class<?> servlet = controllers.get("/adder");
         Method[] methods = servlet.getMethods();

@@ -1,9 +1,7 @@
-package ru.vsu.csf.pryadchenko.server.docker.handler;
+package ru.vsu.csf.skofenko.restserver;
 
-import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.ContentType;
-import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Controller;
-import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.GetMapping;
-import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Param;
+import ru.vsu.csf.pryadchenko.server.dockerLogic.TestCat;
+import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.*;
 import ru.vsu.csf.pryadchenko.server.logic.GetProperties;
 import ru.vsu.csf.pryadchenko.server.logic.ServerService;
 
@@ -45,6 +43,16 @@ public class HtmlController {
     @ContentType("image/gif")
     public static String doGif(@Param(name = "path") String path) throws IOException {
         String str = GetProperties.getProperty("resources_path") + "/" + path;
-        return  ServerService.readAllBytes(new File(str));
+        return ServerService.readAllBytes(new File(str));
+    }
+
+    @PostMapping()
+    @ContentType("application/json")
+    public static TestCat doPost(@Param(requestBody = true, type = TestCat.class) TestCat body, @Param(name = "a") String a) {
+        TestCat newCat = new TestCat();
+        newCat.name = body.name + body.name;
+        newCat.age = body.age + 5;
+        newCat.weight = body.weight * 2;
+        return newCat;
     }
 }
