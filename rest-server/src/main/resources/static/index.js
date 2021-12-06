@@ -127,7 +127,7 @@ function sendClick(i, j) {
     let half = N / 2 | 0;
     $.ajax({
         url: `api/select?key=${id}`,
-        type: 'PUT',
+        type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({
             'i': i, 'j': j,
@@ -146,8 +146,8 @@ function sendClick(i, j) {
 
 function promotePawn(piece) {
     $.ajax({
-        url: `api/promote?key={id}`,
-        type: 'PUT',
+        url: `api/promote?key=${id}`,
+        type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({
             'type': piece,

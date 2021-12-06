@@ -55,7 +55,7 @@ public class Application {
                 Socket ClientSocket = s.accept();
                 try {
                     i++;
-                    new Server(ClientSocket);
+                    new Thread(new Server(ClientSocket)).start();
                 } catch (Exception e) {
                     ClientSocket.close();
                 }
@@ -63,7 +63,7 @@ public class Application {
         }
     }
 
-    public synchronized static Servlet getServlet(String name) {
+    public static Servlet getServlet(String name) {
         return dispatchers.get(name);
     }
 

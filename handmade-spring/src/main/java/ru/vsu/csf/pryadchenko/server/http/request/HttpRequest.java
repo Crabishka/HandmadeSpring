@@ -19,10 +19,9 @@ public class HttpRequest {
     private byte[] body;
 
 
-    public HttpRequest(BufferedReader in) {
-        this.in = in;
+    public HttpRequest(String s){
         try {
-            parseInput(in);
+            parseInput(s);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -56,13 +55,8 @@ public class HttpRequest {
         return headers.get(key);
     }
 
-    private void parseInput(BufferedReader in) throws IOException {
+    private void parseInput(String s) throws IOException {
 
-        StringBuilder stringBuilder = new StringBuilder();
-        while (in.ready()) {
-            stringBuilder.append(in.readLine()).append("\n");
-        }
-        String s = stringBuilder.toString();
         String[] lines = s.split("\n");
         String[] requestLine = lines[0].split(" ");
 
