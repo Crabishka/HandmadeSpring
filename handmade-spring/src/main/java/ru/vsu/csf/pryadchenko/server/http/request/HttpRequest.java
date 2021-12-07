@@ -16,6 +16,10 @@ public class HttpRequest {
     private final Map<String, String> headers = new HashMap<>();
 
 
+    public void setBody(byte[] body) {
+        this.body = body;
+    }
+
     private byte[] body;
 
 

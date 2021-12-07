@@ -28,21 +28,49 @@ public class Server implements Runnable {
                  OutputStream outputStream = clientSocket.getOutputStream()) {
                 List<Integer> queue = new LinkedList<>();
                 StringBuilder stringBuilder = new StringBuilder();
-                for (int ch; (ch = input.read()) != -1; ) {
-
+                StringBuilder body = new StringBuilder();
+                int ch;
+                for (; ; ) {
+                    ch = input.read();
                     if (queue.size() >= 4) {
-                        if (queue.get(0) == 13 && queue.get(1) == 10 && queue.get(2) == 13 && queue.get(3) == 10) break;
                         queue.remove(0);
+                        queue.add(ch);
+                        if (queue.get(0) == 13 && queue.get(1) == 10 && queue.get(2) == 13 && queue.get(3) == 10) {
+                            System.out.println((char) ch);
+                            body.append((char) ch);
+                            break;
+                        }
 
+                    } else {
+                        queue.add(ch);
                     }
-                    queue.add(ch);
+
+                    System.out.println(ch);
                     stringBuilder.append((char) ch);
                 }
 
+
+                HttpRequest httpRequest = new HttpRequest(stringBuilder.toString());
                 System.out.println(stringBuilder);
                 System.out.println("вышел");
 
-                HttpRequest httpRequest = new HttpRequest(stringBuilder.toString());
+                String str = httpRequest.getHeader("Content-Length");
+                if (str != null) {
+                    str = str.trim().replace("\r", "");
+                    int contentLength = Integer.parseInt(str); // FIXME
+                    System.out.println(contentLength);
+
+                    for (int i = 0; i < contentLength; i++) {
+                        char c = (char) input.read();
+                        System.out.println(c);
+                        body.append(c);
+                    }
+                    if (body.length() > 1) httpRequest.setBody(body.toString().getBytes(StandardCharsets.UTF_8));
+                    System.out.println(body);
+                }
+
+
+
                 System.out.println("Новое соединение установлено" + " " + httpRequest.getPath() + " " + httpRequest.getParams().toString());
                 String[] path = httpRequest.getPath().split("/");
                 Servlet servlet = Application.getServlet(path[1]);
