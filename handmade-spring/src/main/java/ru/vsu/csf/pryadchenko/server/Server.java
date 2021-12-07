@@ -13,9 +13,7 @@ import java.util.List;
 
 public class Server implements Runnable {
 
-
     Socket clientSocket;
-
 
     public Server(Socket clientSocket) {
         this.clientSocket = clientSocket;
@@ -36,48 +34,33 @@ public class Server implements Runnable {
                         queue.remove(0);
                         queue.add(ch);
                         if (queue.get(0) == 13 && queue.get(1) == 10 && queue.get(2) == 13 && queue.get(3) == 10) {
-                            System.out.println((char) ch);
                             body.append((char) ch);
                             break;
                         }
-
                     } else {
                         queue.add(ch);
                     }
-
-                    System.out.println(ch);
                     stringBuilder.append((char) ch);
                 }
-
-
                 HttpRequest httpRequest = new HttpRequest(stringBuilder.toString());
-                System.out.println(stringBuilder);
-                System.out.println("вышел");
 
                 String str = httpRequest.getHeader("Content-Length");
                 if (str != null) {
                     str = str.trim().replace("\r", "");
                     int contentLength = Integer.parseInt(str); // FIXME
-                    System.out.println(contentLength);
 
                     for (int i = 0; i < contentLength; i++) {
                         char c = (char) input.read();
-                        System.out.println(c);
                         body.append(c);
                     }
                     if (body.length() > 1) httpRequest.setBody(body.toString().getBytes(StandardCharsets.UTF_8));
-                    System.out.println(body);
                 }
-
-
 
                 System.out.println("Новое соединение установлено" + " " + httpRequest.getPath() + " " + httpRequest.getParams().toString());
                 String[] path = httpRequest.getPath().split("/");
                 Servlet servlet = Application.getServlet(path[1]);
                 servlet.doResponse(httpRequest, new HttpResponse(outputStream));
             }
-
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -87,7 +70,5 @@ public class Server implements Runnable {
                 e.printStackTrace();
             }
         }
-
-
     }
 }

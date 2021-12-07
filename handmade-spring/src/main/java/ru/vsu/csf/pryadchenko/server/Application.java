@@ -4,13 +4,9 @@ import ru.vsu.csf.pryadchenko.server.dockerLogic.Servlet;
 import ru.vsu.csf.pryadchenko.server.logic.GetProperties;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;

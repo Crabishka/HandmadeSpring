@@ -13,6 +13,7 @@ import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -86,7 +87,9 @@ public class ApplicationContext {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
-        File destDir = new File(Application.RESOURCE_PATH);
+        String jarName = Paths.get(jar.getName()).getFileName().toString();
+        jarName = jarName.substring(0, jarName.length() - 4);
+        File destDir = new File(Application.RESOURCE_PATH + "/static/" + jarName);
         byte[] buffer = new byte[1024];
         for (Enumeration<JarEntry> entries = jar.entries(); entries.hasMoreElements(); ) {
             JarEntry entry = entries.nextElement();
@@ -122,7 +125,7 @@ public class ApplicationContext {
     }
 
     public static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
-        File destFile = new File(destinationDir, zipEntry.getName());
+        File destFile = new File(destinationDir, zipEntry.getName().substring(7));
         if (zipEntry.isDirectory()) {
             destFile.mkdirs();
         } else {

@@ -1,13 +1,14 @@
 package ru.vsu.csf.skofenko.restserver;
 
-
 import ru.vsu.csf.skofenko.logic.chesspieces.ChessColor;
 import ru.vsu.csf.skofenko.logic.chesspieces.ChessPiece;
 import ru.vsu.csf.skofenko.logic.geometry.Coordinate;
 import ru.vsu.csf.skofenko.logic.model.*;
 
 public class MultiPlayerLogic implements IGameLogic {
-    private ChessColor color;
+
+    private final ChessColor color;
+    private GameLogic logic;
 
     public ChessColor getColor() {
         return color;
@@ -20,8 +21,6 @@ public class MultiPlayerLogic implements IGameLogic {
     public void setLogic(GameLogic logic) {
         this.logic = logic;
     }
-
-    private GameLogic logic;
 
     public MultiPlayerLogic(ChessColor color) {
         this.color = color;
@@ -58,11 +57,6 @@ public class MultiPlayerLogic implements IGameLogic {
     }
 
     @Override
-    public Coordinate getSelectedCord() {
-        return logic.getNowTurn() == color ? logic.getSelectedCord() : Coordinate.EMPTY_CORD;
-    }
-
-    @Override
     public BoardCell[][] getBoard() {
         BoardCell[][] board = logic.getBoard();
         if (logic.getNowTurn() == color) {
@@ -82,7 +76,7 @@ public class MultiPlayerLogic implements IGameLogic {
         if (logic == null) {
             return null;
         } else {
-            return new LogicState(getNowTurn(), getGameState(), getSelectedCord(), getBoard());
+            return new LogicState(getNowTurn(), getGameState(), getBoard());
         }
     }
 }

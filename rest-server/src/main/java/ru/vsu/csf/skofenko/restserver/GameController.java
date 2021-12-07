@@ -5,7 +5,6 @@ import ru.vsu.csf.skofenko.logic.chesspieces.ChessPiece;
 import ru.vsu.csf.skofenko.logic.geometry.Coordinate;
 import ru.vsu.csf.skofenko.logic.model.LogicState;
 
-
 @Controller("api")
 public class GameController {
 
@@ -13,7 +12,7 @@ public class GameController {
     private static final GameService gameService = new GameService();
 
     @PostMapping("connect")
-    public static long doHtml() {
+    public static long connect() {
         return gameService.connect();
     }
 

@@ -129,7 +129,6 @@ public class Servlet {
             e.printStackTrace();
         }
         // Set response
-        System.out.println(new String(body));
         response.setBody(body);
         response.send();
 
