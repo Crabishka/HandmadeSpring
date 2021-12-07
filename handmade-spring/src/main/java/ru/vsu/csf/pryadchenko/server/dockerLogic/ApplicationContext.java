@@ -22,7 +22,7 @@ import java.util.zip.ZipEntry;
  * Factory is repository for Classes in any one package.
  * Factory get PackageURL to parse all classes in this URL.
  */
-public class Factory {
+public class ApplicationContext {
 
     /**
      * if it's Controller name is value of annotation
@@ -38,7 +38,7 @@ public class Factory {
 
     private final Map<AnnotationBinder, Map<String, Bean>> storage = new HashMap<>();
 
-    public Factory(JarFile jar) {
+    public ApplicationContext(JarFile jar) {
         for (AnnotationBinder annotation : AVAILABLE_CLASS_ANNOTATION) {
             storage.put(annotation, new HashMap<>());
         }

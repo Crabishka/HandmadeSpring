@@ -24,12 +24,12 @@ import java.util.jar.JarFile;
  */
 public class Servlet {
 
-    protected Factory factory;
+    protected ApplicationContext applicationContext;
     private String beanPath;
     private String methodPath;
 
     public Servlet(JarFile jar) {
-        this.factory = new Factory(jar);
+        this.applicationContext = new ApplicationContext(jar);
     }
 
 //    @GetMapping
@@ -52,7 +52,7 @@ public class Servlet {
                 methodPath = "";
             }
         }
-        return factory.getByAnnotationAndName(Controller.class, beanPath);
+        return applicationContext.getByAnnotationAndName(Controller.class, beanPath);
     }
 
     public void doGet(HttpRequest request, HttpResponse response) throws IOException {
@@ -81,12 +81,11 @@ public class Servlet {
                     }
                     case ("text/html; charset=UTF-8"):
                     case ("text/css"):
-                    case ("application/javascript"):
-                    {
+                    case ("application/javascript"): {
                         body = method.invoke(null, params.toArray()).toString().getBytes(StandardCharsets.UTF_8);
                         break;
                     }
-                    case ("application/json"):{
+                    case ("application/json"): {
                         Object result = method.invoke(null, params.toArray());
                         String str = mapper.writeValueAsString(result);
                         body = str.getBytes(StandardCharsets.UTF_8);
