@@ -128,9 +128,7 @@ public class ApplicationContext {
     public static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
         File destFile = new File(destinationDir, zipEntry.getName().substring(7));
         if (zipEntry.isDirectory()) {
-            if(!destFile.mkdirs()){
-                throw new IllegalStateException("Failed to create directory " + destFile.getPath());
-            }
+            destFile.mkdirs();
         }
         return destFile;
     }
