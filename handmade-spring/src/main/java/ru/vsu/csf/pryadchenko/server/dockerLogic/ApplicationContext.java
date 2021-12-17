@@ -1,6 +1,5 @@
 package ru.vsu.csf.pryadchenko.server.dockerLogic;
 
-import ru.vsu.csf.pryadchenko.server.Application;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Controller;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Repository;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Service;
@@ -89,7 +88,7 @@ public class ApplicationContext {
         }
         String jarName = Paths.get(jar.getName()).getFileName().toString();
         jarName = jarName.substring(0, jarName.length() - 4);
-        File destDir = new File(Application.RESOURCE_PATH + "/static/" + jarName);
+        File destDir = new File(ResourceManager.BASE_RESOURCE_PATH + "/static/" + jarName);
         byte[] buffer = new byte[1024];
         for (Enumeration<JarEntry> entries = jar.entries(); entries.hasMoreElements(); ) {
             JarEntry entry = entries.nextElement();
@@ -114,7 +113,9 @@ public class ApplicationContext {
                 String classname = file.replace(DIR_SEPARATOR, PKG_SEPARATOR)
                         .substring(0, file.length() - CLASS_FILE_SUFFIX.length());
                 try {
-                    classes.add(loader.loadClass(classname));
+                    Class<?> clas = loader.loadClass(classname);
+                    ResourceManager.put(clas, destDir.getPath());
+                    classes.add(clas);
                 } catch (ClassNotFoundException e) {
                     throw new IllegalArgumentException("Failed to instantiate " + classname + " from " + file, e);
                 }
@@ -127,9 +128,9 @@ public class ApplicationContext {
     public static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
         File destFile = new File(destinationDir, zipEntry.getName().substring(7));
         if (zipEntry.isDirectory()) {
-            destFile.mkdirs();
-        } else {
-            destFile.createNewFile();
+            if(!destFile.mkdirs()){
+                throw new IllegalStateException("Failed to create directory " + destFile.getPath());
+            }
         }
         return destFile;
     }

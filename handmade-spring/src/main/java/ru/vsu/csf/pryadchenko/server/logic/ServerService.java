@@ -9,21 +9,6 @@ import java.util.Base64;
  */
 public class ServerService {
 
-   public static String getExtension(String path) {
-        int index = path.indexOf("\\?");
-        String parsedPath = path;
-        String extension = "";
-        if (index > 0) {
-            parsedPath = path.substring(0, index);
-        }
-
-        int i = parsedPath.lastIndexOf('.');
-        if (i > 0) {
-            extension = parsedPath.substring(i + 1);
-        }
-        return extension;
-    }
-
     public static String readTextFromFile(File file) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         FileReader fileReader = new FileReader(file);

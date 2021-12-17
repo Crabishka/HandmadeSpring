@@ -1,6 +1,5 @@
 package ru.vsu.csf.pryadchenko.server.dockerLogic;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Controller;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.GetMapping;
@@ -31,9 +30,6 @@ public class Servlet {
     public Servlet(JarFile jar) {
         this.applicationContext = new ApplicationContext(jar);
     }
-
-//    @GetMapping
-//    public void a(){}
 
     private Bean extracted(HttpRequest request) {
         String[] path = request.getPath().split("/");

@@ -1,5 +1,6 @@
 package ru.vsu.csf.pryadchenko.server;
 
+import ru.vsu.csf.pryadchenko.server.dockerLogic.ResourceManager;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.Servlet;
 import ru.vsu.csf.pryadchenko.server.logic.GetProperties;
 
@@ -30,7 +31,6 @@ import java.util.jar.JarFile;
 
 public class Application {
 
-    public static final String RESOURCE_PATH = "handmade-spring/src/main/resources";
     private static int PORT;
     static int i = 0;
     static ConcurrentMap<String, Servlet> dispatchers = new ConcurrentHashMap<>();
@@ -64,7 +64,7 @@ public class Application {
     }
 
     public static List<File> getAllFiles() {
-        File file = new File(RESOURCE_PATH + "/docker");
+        File file = new File(ResourceManager.BASE_RESOURCE_PATH + "/docker");
         return Arrays.asList(file.listFiles());
     }
 
@@ -72,7 +72,8 @@ public class Application {
         for (File file : getAllFiles()) {
             if (file.getName().endsWith(".jar")) {
                 JarFile jarFile = new JarFile(file);
-                dispatchers.put(jarFile.getName().substring((RESOURCE_PATH + "/docker").length() + 1,
+                dispatchers.put(jarFile.getName().substring((
+                        ResourceManager.BASE_RESOURCE_PATH + "/docker").length() + 1,
                         jarFile.getName().length() - 4), new Servlet(jarFile));
             }
         }

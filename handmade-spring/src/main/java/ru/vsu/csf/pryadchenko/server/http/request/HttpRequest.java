@@ -1,14 +1,11 @@
 package ru.vsu.csf.pryadchenko.server.http.request;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest {
-
-    BufferedReader in;
 
     private RequestType requestType;
     private String path;
