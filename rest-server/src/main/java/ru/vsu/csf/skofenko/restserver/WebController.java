@@ -1,6 +1,5 @@
 package ru.vsu.csf.skofenko.restserver;
 
-import ru.vsu.csf.pryadchenko.server.Application;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.ResourceManager;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.ContentType;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Controller;

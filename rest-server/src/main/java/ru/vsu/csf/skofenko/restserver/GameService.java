@@ -1,6 +1,5 @@
 package ru.vsu.csf.skofenko.restserver;
 
-
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Injection;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Service;
 import ru.vsu.csf.skofenko.logic.chesspieces.ChessColor;
@@ -8,7 +7,6 @@ import ru.vsu.csf.skofenko.logic.chesspieces.ChessPiece;
 import ru.vsu.csf.skofenko.logic.geometry.Coordinate;
 import ru.vsu.csf.skofenko.logic.model.GameLogic;
 import ru.vsu.csf.skofenko.logic.model.LogicState;
-
 
 @Service
 public class GameService {

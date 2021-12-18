@@ -10,14 +10,6 @@ public class MultiPlayerLogic implements IGameLogic {
     private final ChessColor color;
     private GameLogic logic;
 
-    public ChessColor getColor() {
-        return color;
-    }
-
-    public GameLogic getLogic() {
-        return logic;
-    }
-
     public void setLogic(GameLogic logic) {
         this.logic = logic;
     }
