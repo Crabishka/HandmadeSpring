@@ -18,16 +18,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-/**
- * Factory is repository for Classes in any one package.
- * Factory get PackageURL to parse all classes in this URL.
- */
 public class ApplicationContext {
 
-    /**
-     * if it's Controller name is value of annotation
-     * else name is Class Name
-     */
     private final static List<AnnotationBinder> AVAILABLE_CLASS_ANNOTATION = new ArrayList<>();
 
     static {

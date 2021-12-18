@@ -1,5 +1,6 @@
 package ru.vsu.csf.skofenko.logic.geometry;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ru.vsu.csf.skofenko.logic.model.IGameLogic;
 
 import java.util.Objects;
@@ -85,6 +86,7 @@ public class Coordinate {
         return createFromInner(i, j);
     }
 
+    @JsonIgnore
     public boolean isInBounds() {
         return Math.abs(r) <= IGameLogic.N / 2 && Math.abs(q) <= IGameLogic.N / 2 && Math.abs(r + q) <= IGameLogic.N / 2;
     }

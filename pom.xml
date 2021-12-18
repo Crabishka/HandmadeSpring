@@ -8,6 +8,8 @@
     <modules>
         <module>handmade-spring</module>
         <module>rest-server</module>
+        <module>rest-client</module>
+        <module>chess-logic</module>
     </modules>
 
     <groupId>ru.vsu.csf</groupId>
