@@ -15,35 +15,35 @@ public class WebController {
 
     @GetMapping("html")
     @ContentType("text/html; charset=UTF-8")
-    public static String doHtml(@Param(name = "path") String path) throws IOException {
+    public String doHtml(@Param(name = "path") String path) throws IOException {
         File file = ResourceManager.get(WebController.class, path);
         return ServerService.readTextFromFile(file);
     }
 
     @GetMapping("pic")
     @ContentType("image/jpeg")
-    public static String doPic(@Param(name = "path") String path) throws IOException {
+    public String doPic(@Param(name = "path") String path) throws IOException {
         File file = ResourceManager.get(WebController.class, path);
         return ServerService.readAllBytes(file);
     }
 
     @GetMapping("css")
     @ContentType("text/css")
-    public static String doCss(@Param(name = "path") String path) throws IOException {
+    public String doCss(@Param(name = "path") String path) throws IOException {
         File file = ResourceManager.get(WebController.class, path);
         return ServerService.readTextFromFile(file);
     }
 
     @GetMapping("js")
     @ContentType("application/javascript")
-    public static String doJs(@Param(name = "path") String path) throws IOException {
+    public String doJs(@Param(name = "path") String path) throws IOException {
         File file = ResourceManager.get(WebController.class, path);
         return ServerService.readTextFromFile(file);
     }
 
     @GetMapping("gif")
     @ContentType("image/gif")
-    public static String doGif(@Param(name = "path") String path) throws IOException {
+    public String doGif(@Param(name = "path") String path) throws IOException {
         File file = ResourceManager.get(WebController.class, path);
         return ServerService.readAllBytes(file);
     }

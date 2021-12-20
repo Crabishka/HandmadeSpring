@@ -3,6 +3,7 @@ package ru.vsu.csf.pryadchenko.server.dockerLogic;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Controller;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -12,7 +13,8 @@ import java.util.*;
  */
 public class Bean {
 
-    String beanID = null;
+    Object classInstance;
+    String beanID;
     List<AnnotationBinder> classAnnotation = new ArrayList<>();
     Map<Method, Map<String, AnnotationBinder>> methods = new HashMap<>(); // TODO remake using Map<Method,Map<String, Annotation>>
     Map<Method, List<Annotation>> paramsOfMethods = new HashMap<>();
@@ -23,9 +25,14 @@ public class Bean {
             this.classAnnotation.add(new AnnotationBinder(annotation));
             if (annotation.annotationType().equals(Controller.class)) {
                 beanID = ((Controller) annotation).value();
+                try {
+                    classInstance = parsedClass.getDeclaredConstructor().newInstance();
+                } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
+                        | InvocationTargetException e) {
+                    throw new RuntimeException("Couldn't create instance of class",e);
+                }
             }
         }
-
 
         Method[] methods = parsedClass.getDeclaredMethods();
 
@@ -48,7 +55,6 @@ public class Bean {
 
             this.paramsOfMethods.put(method, params);
         }
-
     }
 
 

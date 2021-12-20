@@ -72,17 +72,17 @@ public class Servlet {
                 switch (contentType.value) {
                     case ("image/jpeg"):
                     case ("image/gif"): {
-                        body = Base64.getDecoder().decode(method.invoke(null, params.toArray()).toString());  // FIXME
+                        body = Base64.getDecoder().decode(method.invoke(bean.classInstance, params.toArray()).toString());  // FIXME
                         break;
                     }
                     case ("text/html; charset=UTF-8"):
                     case ("text/css"):
                     case ("application/javascript"): {
-                        body = method.invoke(null, params.toArray()).toString().getBytes(StandardCharsets.UTF_8);
+                        body = method.invoke(bean.classInstance, params.toArray()).toString().getBytes(StandardCharsets.UTF_8);
                         break;
                     }
                     case ("application/json"): {
-                        Object result = method.invoke(null, params.toArray());
+                        Object result = method.invoke(bean.classInstance, params.toArray());
                         String str = mapper.writeValueAsString(result);
                         body = str.getBytes(StandardCharsets.UTF_8);
                         break;
@@ -107,7 +107,6 @@ public class Servlet {
         List<Object> params = new ArrayList<>();
         for (Annotation annotation : bean.getParamsByMethod(method)) {
             if (((Param) annotation).requestBody()) {
-
                 Object object = mapper.readValue(request.getBody(), ((Param) annotation).type());
                 params.add(object);
             } else {
@@ -118,7 +117,7 @@ public class Servlet {
         byte[] body = null;
         response.putHeader("Content-Type", "application/json");
         try {
-            Object result = method.invoke(null, params.toArray());
+            Object result = method.invoke(bean.classInstance, params.toArray());
             String str = mapper.writeValueAsString(result);
             body = str.getBytes(StandardCharsets.UTF_8);
         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -127,7 +126,6 @@ public class Servlet {
         // Set response
         response.setBody(body);
         response.send();
-
     }
 
     public void doError(HttpResponse response) throws IOException {

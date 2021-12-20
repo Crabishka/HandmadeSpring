@@ -9,32 +9,32 @@ import ru.vsu.csf.skofenko.logic.model.LogicState;
 public class GameController {
 
     @Injection
-    private static final GameService gameService = new GameService();
+    private final GameService gameService = new GameService();
 
     @PostMapping("connect")
-    public static long connect() {
+    public long connect() {
         return gameService.connect();
     }
 
     @GetMapping("getState")
     @ContentType
-    public static LogicState getLogicState(@Param(name = "key") String key) {
+    public LogicState getLogicState(@Param(name = "key") String key) {
         return gameService.getLogicState(Long.parseLong(key));
 
     }
 
     @PostMapping("select")
-    public static boolean selectPiece(@Param(name = "key") String key, @Param(requestBody = true, type = Coordinate.class) Coordinate cord) {
+    public boolean selectPiece(@Param(name = "key") String key, @Param(requestBody = true, type = Coordinate.class) Coordinate cord) {
         return gameService.selectPiece(Long.parseLong(key), cord);
     }
 
     @PostMapping("promote")
-    public static boolean promotePawn(@Param(name = "key") String key, @Param(requestBody = true, type = ChessPiece.class) ChessPiece piece) {
+    public boolean promotePawn(@Param(name = "key") String key, @Param(requestBody = true, type = ChessPiece.class) ChessPiece piece) {
         return gameService.promotePawn(Long.parseLong(key), piece);
     }
 
     @PostMapping("terminate")
-    public static void terminate(@Param(name = "key") String key) {
+    public void terminate(@Param(name = "key") String key) {
         gameService.terminate(Long.parseLong(key));
     }
 }

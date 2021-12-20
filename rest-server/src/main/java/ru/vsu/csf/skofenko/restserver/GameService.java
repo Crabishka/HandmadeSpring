@@ -12,7 +12,7 @@ import ru.vsu.csf.skofenko.logic.model.LogicState;
 public class GameService {
 
     @Injection
-    private static final LogicRepository repository = new LogicRepository();
+    private final LogicRepository repository = new LogicRepository();
 
     private long clientID = Long.MIN_VALUE;
 
