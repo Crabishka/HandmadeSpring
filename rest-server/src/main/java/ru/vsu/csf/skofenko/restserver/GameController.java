@@ -8,7 +8,7 @@ import ru.vsu.csf.skofenko.logic.model.LogicState;
 @Controller("api")
 public class GameController {
 
-    @Injection
+    @Inject
     private GameService gameService;
 
     @PostMapping("connect")
@@ -17,24 +17,22 @@ public class GameController {
     }
 
     @GetMapping("state")
-    @ContentType
-    public LogicState getLogicState(@Param(name = "key") String key) {
+    public LogicState getLogicState(@Param("key") String key) {
         return gameService.getLogicState(Long.parseLong(key));
-
     }
 
     @PostMapping("select")
-    public boolean selectPiece(@Param(name = "key") String key, @Param(requestBody = true, type = Coordinate.class) Coordinate cord) {
+    public boolean selectPiece(@Param("key") String key, @RequestBody Coordinate cord) {
         return gameService.selectPiece(Long.parseLong(key), cord);
     }
 
     @PostMapping("promote")
-    public boolean promotePawn(@Param(name = "key") String key, @Param(requestBody = true, type = ChessPiece.class) ChessPiece piece) {
+    public boolean promotePawn(@Param("key") String key, @RequestBody ChessPiece piece) {
         return gameService.promotePawn(Long.parseLong(key), piece);
     }
 
     @PostMapping("terminate")
-    public void terminate(@Param(name = "key") String key) {
+    public void terminate(@Param("key") String key) {
         gameService.terminate(Long.parseLong(key));
     }
 }

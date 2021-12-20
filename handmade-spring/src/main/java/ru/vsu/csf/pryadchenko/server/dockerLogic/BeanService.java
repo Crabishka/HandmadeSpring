@@ -3,7 +3,7 @@ package ru.vsu.csf.pryadchenko.server.dockerLogic;
 
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Controller;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.GetMapping;
-import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Injection;
+import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Inject;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.PostMapping;
 
 import java.lang.reflect.Field;
@@ -41,7 +41,7 @@ class BeanService {
 
     static void setFields(Class<?> clazz, Object instance, Map<Class<?>, Object> map) {
         for (Field field : clazz.getDeclaredFields()) {
-            if (field.getAnnotation(Injection.class) != null) {
+            if (field.getAnnotation(Inject.class) != null) {
                 Object value = map.get(field.getType());
                 field.setAccessible(true);
                 try {

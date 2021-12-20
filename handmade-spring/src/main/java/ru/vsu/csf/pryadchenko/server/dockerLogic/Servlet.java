@@ -35,14 +35,15 @@ public class Servlet {
         for (Annotation[] annotations : method.getParameterAnnotations()) {
             for (Annotation annotation : annotations) {
                 if (annotation.annotationType().equals(Param.class)) {
-                    String name = ((Param) annotation).name();
+                    String name = ((Param) annotation).value();
                     params.add(requestParams.get(name));
                 }
             }
         }
         byte[] body = null;
         try {
-            String contentType = method.getAnnotation(ContentType.class).value();
+            ContentType typeAnnotation = method.getAnnotation(ContentType.class);
+            String contentType = typeAnnotation == null ? "application/json" : typeAnnotation.value();
             response.putHeader("Content-Type", contentType);
             switch (contentType) {
                 case ("image/jpeg"):
@@ -82,16 +83,17 @@ public class Servlet {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, String> requestParams = request.getParams();
         List<Object> params = new ArrayList<>();
+        Iterator<Class<?>> typeIterator = Arrays.stream(method.getParameterTypes()).iterator();
         for (Annotation[] annotations : method.getParameterAnnotations()) {
+            Class<?> paramType = typeIterator.next();
             for (Annotation annotation : annotations) {
                 if (annotation.annotationType().equals(Param.class)) {
-                    Param param = (Param) annotation;
-                    if (param.requestBody()) {
-                        Object object = mapper.readValue(request.getBody(), param.type());
-                        params.add(object);
-                    } else {
-                        params.add(requestParams.get(param.name()));
-                    }
+                    params.add(
+                            requestParams.get(((Param) annotation).value())
+                    );
+                } else if (annotation.annotationType().equals(RequestBody.class)) {
+                    Object object = mapper.readValue(request.getBody(), paramType);
+                    params.add(object);
                 }
             }
         }

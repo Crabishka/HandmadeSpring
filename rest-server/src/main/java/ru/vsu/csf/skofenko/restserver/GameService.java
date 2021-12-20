@@ -1,6 +1,6 @@
 package ru.vsu.csf.skofenko.restserver;
 
-import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Injection;
+import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Inject;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.annotation.Service;
 import ru.vsu.csf.skofenko.logic.chesspieces.ChessColor;
 import ru.vsu.csf.skofenko.logic.chesspieces.ChessPiece;
@@ -11,7 +11,7 @@ import ru.vsu.csf.skofenko.logic.model.LogicState;
 @Service
 public class GameService {
 
-    @Injection
+    @Inject
     private LogicRepository repository;
 
     private long clientID = Long.MIN_VALUE;
