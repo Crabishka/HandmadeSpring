@@ -14,10 +14,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.jar.JarFile;
 
-/**
- * Servlet is used for making HTTP response by getting and parsing HTTP request.
- * It also contains Factory to
- */
 public class Servlet {
 
     private final ApplicationContext applicationContext;
@@ -26,8 +22,7 @@ public class Servlet {
         this.applicationContext = new ApplicationContext(jar);
     }
 
-
-    public void doGet(HttpRequest request, HttpResponse response) throws IOException {
+    private void doGet(HttpRequest request, HttpResponse response) throws IOException {
         String mapping = request.getPath().split("/", 3)[2];
         if (mapping.endsWith("/")) {
             mapping = mapping.substring(0, mapping.length() - 1);
@@ -77,7 +72,7 @@ public class Servlet {
         response.send();
     }
 
-    public void doPost(HttpRequest request, HttpResponse response) throws IOException {
+    private void doPost(HttpRequest request, HttpResponse response) throws IOException {
         String mapping = request.getPath().split("/", 3)[2];
         if (mapping.endsWith("/")) {
             mapping = mapping.substring(0, mapping.length() - 1);
@@ -113,7 +108,7 @@ public class Servlet {
         response.send();
     }
 
-    public void doError(HttpResponse response) throws IOException {
+    private void doError(HttpResponse response) throws IOException {
         response.setStatus("501 Not Implemented");
         response.setBody("Type doesn't supported".getBytes(StandardCharsets.UTF_8));
         response.send();
