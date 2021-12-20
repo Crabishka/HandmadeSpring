@@ -17,22 +17,22 @@ public class GameController {
     }
 
     @GetMapping("state")
-    public LogicState getLogicState(@Param("key") String key) {
-        return gameService.getLogicState(Long.parseLong(key));
+    public LogicState getLogicState(@Param("key") Long key) {
+        return gameService.getLogicState(key);
     }
 
     @PostMapping("select")
-    public boolean selectPiece(@Param("key") String key, @RequestBody Coordinate cord) {
-        return gameService.selectPiece(Long.parseLong(key), cord);
+    public boolean selectPiece(@Param("key") Long key, @RequestBody Coordinate cord) {
+        return gameService.selectPiece(key, cord);
     }
 
     @PostMapping("promote")
-    public boolean promotePawn(@Param("key") String key, @RequestBody ChessPiece piece) {
-        return gameService.promotePawn(Long.parseLong(key), piece);
+    public boolean promotePawn(@Param("key") Long key, @RequestBody ChessPiece piece) {
+        return gameService.promotePawn(key, piece);
     }
 
     @PostMapping("terminate")
-    public void terminate(@Param("key") String key) {
-        gameService.terminate(Long.parseLong(key));
+    public void terminate(@Param("key") Long key) {
+        gameService.terminate(key);
     }
 }
