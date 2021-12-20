@@ -55,7 +55,7 @@ public class Server implements Runnable {
                     if (body.length() > 1) httpRequest.setBody(body.toString().getBytes(StandardCharsets.UTF_8));
                 }
 
-                System.out.println("Новое соединение установлено" + " " + httpRequest.getPath() + " " + httpRequest.getParams().toString());
+                System.out.println("New connection established " + httpRequest.getPath() + " " + httpRequest.getParams().toString());
                 String[] path = httpRequest.getPath().split("/");
                 Servlet servlet = Application.getServlet(path[1]);
                 servlet.doResponse(httpRequest, new HttpResponse(outputStream));

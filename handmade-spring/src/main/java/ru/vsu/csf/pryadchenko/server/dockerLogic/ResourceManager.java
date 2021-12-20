@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ResourceManager {
-    public static final String BASE_RESOURCE_PATH = "handmade-spring/src/main/resources";
 
     private static final Map<Class<?>, String> resourcePathMap = new HashMap<>();
 

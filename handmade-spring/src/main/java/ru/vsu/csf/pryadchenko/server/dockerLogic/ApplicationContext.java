@@ -48,7 +48,7 @@ class ApplicationContext {
         }
         String jarName = Paths.get(jar.getName()).getFileName().toString();
         jarName = jarName.substring(0, jarName.length() - 4);
-        File destDir = new File(ResourceManager.BASE_RESOURCE_PATH + "/static/" + jarName);
+        File destDir = new File("resources/" + jarName);
         byte[] buffer = new byte[1024];
         for (Enumeration<JarEntry> entries = jar.entries(); entries.hasMoreElements(); ) {
             JarEntry entry = entries.nextElement();

@@ -1,6 +1,5 @@
 package ru.vsu.csf.pryadchenko.server;
 
-import ru.vsu.csf.pryadchenko.server.dockerLogic.ResourceManager;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.Servlet;
 import ru.vsu.csf.pryadchenko.server.logic.GetProperties;
 
@@ -48,18 +47,15 @@ public class Application {
         return dispatchers.get(name);
     }
 
-    public static List<File> getAllFiles() {
-        File file = new File(ResourceManager.BASE_RESOURCE_PATH + "/docker");
-        return Arrays.asList(file.listFiles());
+    public static File[] getAllFiles() {
+        return new File("docker").listFiles();
     }
 
     public static void createServlet() throws IOException {
         for (File file : getAllFiles()) {
             if (file.getName().endsWith(".jar")) {
                 JarFile jarFile = new JarFile(file);
-                dispatchers.put(jarFile.getName().substring((
-                        ResourceManager.BASE_RESOURCE_PATH + "/docker").length() + 1,
-                        jarFile.getName().length() - 4), new Servlet(jarFile));
+                dispatchers.put(jarFile.getName().substring(7, jarFile.getName().length() - 4), new Servlet(jarFile));
             }
         }
     }
@@ -77,5 +73,4 @@ public class Application {
                 "         |||||\n" +
                 "   .....//||||\\....");
     }
-
 }
