@@ -1,5 +1,6 @@
-package ru.vsu.csf.pryadchenko.server;
+package ru.vsu.csf.pryadchenko.server.logic;
 
+import ru.vsu.csf.pryadchenko.server.Application;
 import ru.vsu.csf.pryadchenko.server.dockerLogic.Servlet;
 import ru.vsu.csf.pryadchenko.server.http.request.HttpRequest;
 import ru.vsu.csf.pryadchenko.server.http.response.HttpResponse;

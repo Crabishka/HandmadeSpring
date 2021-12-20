@@ -1,31 +1,22 @@
 package ru.vsu.csf.pryadchenko.server;
 
 import ru.vsu.csf.pryadchenko.server.dockerLogic.Servlet;
-import ru.vsu.csf.pryadchenko.server.logic.GetProperties;
+import ru.vsu.csf.pryadchenko.server.logic.AppProperties;
+import ru.vsu.csf.pryadchenko.server.logic.Server;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.jar.JarFile;
 
 public class Application {
 
-    private static int PORT;
+    private static final int PORT = Integer.parseInt(AppProperties.get("port"));
     static int i = 0;
     static ConcurrentMap<String, Servlet> dispatchers = new ConcurrentHashMap<>();
-
-    static {
-        try {
-            PORT = Integer.parseInt(GetProperties.getProperty("port"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public static void main(String[] args) throws IOException {
         createServlet();

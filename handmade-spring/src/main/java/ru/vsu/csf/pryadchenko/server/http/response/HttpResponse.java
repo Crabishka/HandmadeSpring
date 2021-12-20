@@ -1,6 +1,6 @@
 package ru.vsu.csf.pryadchenko.server.http.response;
 
-import ru.vsu.csf.pryadchenko.server.logic.GetProperties;
+import ru.vsu.csf.pryadchenko.server.logic.AppProperties;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -14,17 +14,9 @@ import java.util.Map;
  */
 public class HttpResponse {
 
+    private static final String VERSION = AppProperties.get("protocol-version");
+
     private final OutputStream output;
-
-    private String version;
-
-    {
-        try {
-            version = GetProperties.getProperty("protocol_version");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void setStatus(String status) {
         this.status = status;
@@ -52,7 +44,7 @@ public class HttpResponse {
 
     public void send() throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(version).append(" ").append(status).append("\n");
+        stringBuilder.append(VERSION).append(" ").append(status).append("\n");
         for (Map.Entry<String, String> header : headers.entrySet()) {
             stringBuilder.append(header.getKey()).append(": ").append(header.getValue()).append("\n");
         }
