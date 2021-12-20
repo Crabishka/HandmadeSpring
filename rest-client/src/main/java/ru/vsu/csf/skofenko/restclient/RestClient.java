@@ -66,7 +66,7 @@ public class RestClient implements IGameLogic {
 
     private void updateLogicState() {
         try {
-            logicState = template.getForObject(String.format("%s/getState?key={0}", SERVER_URL),
+            logicState = template.getForObject(String.format("%s/state?key={0}", SERVER_URL),
                     LogicState.class, SESSION_ID);
         } catch (HttpStatusCodeException e) {
             returnToSingleFunc.accept("player-left");
