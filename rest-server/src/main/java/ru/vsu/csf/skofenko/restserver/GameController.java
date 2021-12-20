@@ -9,14 +9,14 @@ import ru.vsu.csf.skofenko.logic.model.LogicState;
 public class GameController {
 
     @Injection
-    private final GameService gameService = new GameService();
+    private GameService gameService;
 
     @PostMapping("connect")
     public long connect() {
         return gameService.connect();
     }
 
-    @GetMapping("getState")
+    @GetMapping("state")
     @ContentType
     public LogicState getLogicState(@Param(name = "key") String key) {
         return gameService.getLogicState(Long.parseLong(key));

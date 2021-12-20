@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -18,59 +17,28 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-public class ApplicationContext {
+class ApplicationContext {
 
-    private final static List<AnnotationBinder> AVAILABLE_CLASS_ANNOTATION = new ArrayList<>();
+    private final EndpointManager endpointManager = new EndpointManager();
 
-    static {
-        AVAILABLE_CLASS_ANNOTATION.add(new AnnotationBinder(Controller.class));
-        AVAILABLE_CLASS_ANNOTATION.add(new AnnotationBinder(Service.class));
-        AVAILABLE_CLASS_ANNOTATION.add(new AnnotationBinder(Repository.class));
-    }
-
-    private final Map<AnnotationBinder, Map<String, Bean>> storage = new HashMap<>();
-
-    public ApplicationContext(JarFile jar) {
-        for (AnnotationBinder annotation : AVAILABLE_CLASS_ANNOTATION) {
-            storage.put(annotation, new HashMap<>());
-        }
-
+    ApplicationContext(JarFile jar) {
         Collection<Class<?>> classes = getAllClasses(jar);
-
+        Map<Class<?>, Object> classToInstanceMap = new HashMap<>();
         for (Class<?> clazz : classes) {
-            Bean bean = new Bean(clazz);
-
-            for (AnnotationBinder annotation : bean.getClassAnnotation()) {
-                if (AVAILABLE_CLASS_ANNOTATION.contains(annotation)) {
-                    String name = bean.beanID == null ? clazz.getCanonicalName() : bean.beanID;
-                    storage.get(annotation).put(name, bean);
-                    break;
-                }
+            if (clazz.getAnnotation(Controller.class) != null) {
+                Object instance = BeanService.initialise(clazz);
+                classToInstanceMap.put(clazz, instance);
+                BeanService.parseEndpoints(clazz, instance, endpointManager);
+            } else if (clazz.getAnnotation(Service.class) != null || clazz.getAnnotation(Repository.class) != null) {
+                classToInstanceMap.put(clazz, BeanService.initialise(clazz));
             }
         }
+        for (Map.Entry<Class<?>, Object> entry : classToInstanceMap.entrySet()) {
+            BeanService.setFields(entry.getKey(), entry.getValue(), classToInstanceMap);
+        }
     }
 
-    /**
-     * just plain get from map method
-     * use .getClass() to find by annotation
-     *
-     * @param annotation - in our case is {Controller, Service, Repository}
-     * @param name       - name of Class
-     * @return Bean (nullable)
-     */
-    public Bean getByAnnotationAndName(Class<? extends Annotation> annotation, String name) {
-        return storage.get(new AnnotationBinder(annotation)).get(name);
-    }
-
-
-    private static final char PKG_SEPARATOR = '.';
-    private static final char DIR_SEPARATOR = '/';
-    private static final String CLASS_FILE_SUFFIX = ".class";
-
-    /**
-     * Возвращает классы из jar
-     */
-    public static Collection<Class<?>> getAllClasses(JarFile jar) {
+    private static Collection<Class<?>> getAllClasses(JarFile jar) {
         Collection<Class<?>> classes = new ArrayList<>();
         URLClassLoader loader;
         try {
@@ -101,9 +69,8 @@ public class ApplicationContext {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-            } else if (file.endsWith(CLASS_FILE_SUFFIX)) {
-                String classname = file.replace(DIR_SEPARATOR, PKG_SEPARATOR)
-                        .substring(0, file.length() - CLASS_FILE_SUFFIX.length());
+            } else if (file.endsWith(".class")) {
+                String classname = file.replace('/', '.').substring(0, file.length() - 6);
                 try {
                     Class<?> clas = loader.loadClass(classname);
                     ResourceManager.put(clas, destDir.getPath());
@@ -117,11 +84,15 @@ public class ApplicationContext {
         return classes;
     }
 
-    public static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
+    private static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
         File destFile = new File(destinationDir, zipEntry.getName().substring(7));
         if (zipEntry.isDirectory()) {
             destFile.mkdirs();
         }
         return destFile;
+    }
+
+    EndpointManager getEndpointManager() {
+        return endpointManager;
     }
 }

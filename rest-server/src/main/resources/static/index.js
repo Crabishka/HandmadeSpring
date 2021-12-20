@@ -112,7 +112,7 @@ function canvasClick(e) {
 }
 
 function updateGameState() {
-    $.get(`api/getState?key=${id}`).done((data) => {
+    $.get(`api/state?key=${id}`).done((data) => {
         if (data != null) {
             gameState = data;
             if (canvas == null) {

@@ -14,21 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.jar.JarFile;
 
-/**
- * TODO
- * Annotation for Service/Repository - done
- * Factory in Servlet - done
- * ContentType annotation - done
- * Post HTTP - done
- * html, css, js content types - done
- * Json content Type - done
- * Injection in Service
- * ResourceHandler - postponed
- * Regex for path - postponed
- * Fix Annotation/Class<? extends Annotation> problem - done
- * Repository interface
- */
-
 public class Application {
 
     private static int PORT;

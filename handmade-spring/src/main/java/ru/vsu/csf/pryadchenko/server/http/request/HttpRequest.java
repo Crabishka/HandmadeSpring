@@ -11,14 +11,7 @@ public class HttpRequest {
     private String path;
     private final Map<String, String> params = new HashMap<>();
     private final Map<String, String> headers = new HashMap<>();
-
-
-    public void setBody(byte[] body) {
-        this.body = body;
-    }
-
     private byte[] body;
-
 
     public HttpRequest(String s) {
         try {
@@ -26,6 +19,10 @@ public class HttpRequest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setBody(byte[] body) {
+        this.body = body;
     }
 
     public byte[] getBody() {
@@ -44,14 +41,6 @@ public class HttpRequest {
         return params;
     }
 
-    public Map<String, String> getHeaders() {
-        return headers;
-    }
-
-    public String getParam(String key) {
-        return params.get(key);  // return null if there's not such key
-    }
-
     public String getHeader(String key) {
         return headers.get(key);
     }
@@ -61,16 +50,10 @@ public class HttpRequest {
         String[] lines = s.split("\n");
         String[] requestLine = lines[0].split(" ");
 
-        switch (requestLine[0]) {
-            case "GET":
-                requestType = RequestType.GET;
-                break;
-            case "POST":
-                requestType = RequestType.POST;
-                break;
-            default:
-                requestType = RequestType.GET;
-                break;
+        if ("GET".equals(requestLine[0])) {
+            requestType = RequestType.GET;
+        } else {
+            requestType = RequestType.POST;
         }
 
         String[] link = requestLine[1].split("\\?");
@@ -90,17 +73,11 @@ public class HttpRequest {
             i++;
         }
 
-
         StringBuilder bodyBuilder = new StringBuilder();
         while (lines.length > i) {
             bodyBuilder.append(lines[i]).append("\n");
             i++;
         }
-
         this.body = bodyBuilder.toString().getBytes(StandardCharsets.UTF_8);
-
-
     }
-
-
 }

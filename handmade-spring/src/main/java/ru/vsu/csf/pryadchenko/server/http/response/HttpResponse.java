@@ -38,10 +38,6 @@ public class HttpResponse {
     private final Map<String, String> headers = new HashMap<>();
     private byte[] body;
 
-    public String getHeader(String key) {
-        return headers.get(key);
-    }
-
     public String putHeader(String key, String value) {
         return headers.put(key, value);
     }
@@ -67,6 +63,4 @@ public class HttpResponse {
         output.write(res);
 
     }
-
-
 }

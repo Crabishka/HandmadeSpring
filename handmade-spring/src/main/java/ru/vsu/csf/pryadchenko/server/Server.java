@@ -1,6 +1,5 @@
 package ru.vsu.csf.pryadchenko.server;
 
-
 import ru.vsu.csf.pryadchenko.server.dockerLogic.Servlet;
 import ru.vsu.csf.pryadchenko.server.http.request.HttpRequest;
 import ru.vsu.csf.pryadchenko.server.http.response.HttpResponse;
@@ -13,7 +12,7 @@ import java.util.List;
 
 public class Server implements Runnable {
 
-    Socket clientSocket;
+    private final Socket clientSocket;
 
     public Server(Socket clientSocket) {
         this.clientSocket = clientSocket;

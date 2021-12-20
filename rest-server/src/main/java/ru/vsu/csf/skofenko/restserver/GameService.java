@@ -12,7 +12,7 @@ import ru.vsu.csf.skofenko.logic.model.LogicState;
 public class GameService {
 
     @Injection
-    private final LogicRepository repository = new LogicRepository();
+    private LogicRepository repository;
 
     private long clientID = Long.MIN_VALUE;
 
@@ -32,7 +32,6 @@ public class GameService {
 
     public LogicState getLogicState(long key) {
         return repository.getLogicByClientID(key).getLogicState();
-
     }
 
     public boolean selectPiece(long key, Coordinate cord) {
